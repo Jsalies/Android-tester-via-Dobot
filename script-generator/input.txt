@@ -1,0 +1,13 @@
+solo.clickOnScreen(410.75F, 614.0F);
+        //Sleep for 3478 milliseconds
+solo.sleep(5000);
+        //Click on (428.647, 626.0)
+solo.clickOnScreen(428.647F, 626.0F);
+        //Click on (422.39566, 585.5522)
+		solo.clickOnScreen(422.39566F, 585.5522F);
+        //Sleep for 3137 milliseconds
+		solo.sleep(5000);
+        //Click on (446.25, 594.75)
+		solo.clickOnScreen(446.25F, 594.75F);
+        //Press menu back key
+		solo.goBack();
