@@ -2,7 +2,7 @@
 import sys, getopt
 
 def process(line):
-    return line.replace('solo.clickOnScreen','mov').replace('solo.sleep','wait').replace('solo.goBack()','return')
+    return line.replace('solo.clickOnScreen','mov').replace('solo.sleep','wait').replace('solo.goBack()','return').replace(';',' ').replace('F','')
 
 
 def main(argv):
@@ -26,7 +26,10 @@ def main(argv):
     for line in open(inputfilePath,'r'):
         if line.find("//") < 0 and len(line.strip()) >0:
             #print(process(line.strip()).rstrip('\n').strip(''))
-            outputFile.write(process(line.strip()).strip('')+'\n')
+            processedLine = process(line.strip()).strip('')
+            if processedLine.find("mov") >= 0 :
+                processedLine += "touch()"
+            outputFile.write(processedLine +'\n')
     outputFile.close()
 
 
