@@ -1,7 +1,6 @@
-move(2,3) touch
-touch()  	move(1,  5)
-MOve   (2  ,  9)
-touch
-
-
-MOve 	(5,   9) touch(  )
+mov(410.75, 614.0) touch()
+wait(5000) 
+mov(428.647, 626.0) touch()
+mov(422.39566, 585.5522) touch()
+wait(5000) 
+mov(446.25, 594.75) touch()

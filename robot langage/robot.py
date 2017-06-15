@@ -1,7 +1,7 @@
 # ------------------------------------------------------------
 # the micro langage to lead the Dobot Magician
 #
-# allowed sinthax :
+# allowed syntax :
 #
 # "move(numer,number)"
 # "touch()"
@@ -12,6 +12,7 @@
 # ------------------------------------------------------------
 import ply.lex as lex
 import ply.yacc as yacc
+import time
 
 # we define the required tokens for our langage.
 tokens = (
@@ -21,15 +22,17 @@ tokens = (
    'separator',
    'move',
    'touch',
+   'wait',
 )
 
 # we define the characters which represente each token
-t_digit       = r'[0-9]+'
+t_digit       = r'[0-9]+\.*[0-9]*'
 t_lbracket    = r'\('
 t_rbracket    = r'\)'
 t_separator   = r','
-t_move        = r'(?i)Move'
+t_move        = r'(?i)Mov'
 t_touch       = r'(?i)Touch'
+t_wait        = r'(?i)Wait'
 t_ignore_space  = r'\s'
 
 
@@ -38,7 +41,6 @@ t_ignore_space  = r'\s'
 def t_newline(t):
     r'\n+'
     pass
-
 
 def t_tab(t):
     r'\t+'
@@ -53,6 +55,8 @@ def t_error(t):
 def p_move(p):
     '''commande : bouger commande
              | bouger
+             | attendre commande
+             | attendre
              | toucher commande
              | toucher
              '''
@@ -68,6 +72,11 @@ def p_toucher(p):
                 | touch
                 '''
     print("toucher")
+
+#when we meet "wait(xxx)"
+def p_attendre(p):
+    ''' attendre : wait lbracket digit rbracket'''
+    print "pause : "+p[3]
     
 
 # if we meet a grammar error in our input file
@@ -83,7 +92,7 @@ lexer = lex.lex()
 yacc.yacc()
 
 
-s = open("data.txt", "r")
+s = open("scriptest.txt", "r")
 chaine=""
 for ligne in s:
     chaine+=ligne
