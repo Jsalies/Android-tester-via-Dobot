@@ -3,9 +3,10 @@
 #
 # allowed syntax :
 #
-# "move(numer,number)"
+# "mov(number,number)"
 # "touch()"
 # "touch"
+# "wait(number)"
 # the three choises can be written with or without spaces
 # the three choises allowed lower and upper cases.
 # "touch" can be written with or without brackets
@@ -68,8 +69,8 @@ def p_move(p):
 def p_bouger(p):
     ''' bouger : move lbracket digit separator digit rbracket'''
     coord=ecran.Calc_Coordinates(p[3],p[5])
-    print "go to : (" + coord[0] + "(" + p[3] + "pixels)," + coord[1] + "(" + p[5] + "pixels)"
-    Dfonct.Movement(api,coord[0],coord[1])
+    print ("go to : ({}({}pixels),{}({}pixels)".format(coord[0],p[3],coord[1],p[5]))
+    Dfonct.Movement(api,coord[0],coord[1],z_min+30)
     
 #when we meet "touch"/"touch()
 def p_toucher(p):
@@ -83,8 +84,8 @@ def p_toucher(p):
 def p_attendre(p):
     ''' attendre : wait lbracket digit rbracket'''
     print "pause de : " + p[3] + "ms"
-    time.sleep(p[3])
-    
+    time.sleep(float(p[3])/1000.)
+
 
 # if we meet a grammar error in our input file
 def p_error(p):
@@ -111,10 +112,10 @@ if (state == dType.DobotConnect.DobotConnect_NoError):
     
     # Build the parser
     yacc.yacc()
-    
     largueur=raw_input("veuillez entrer la largueur (en pixels) de l'ecran : ")
     hauteur=raw_input("veuillez entrer la hauteur (en pixels) de l'ecran : ")
-    ecran=screen.screen(api,largueur,hauteur)
+    Dfonct.Init(api)    
+    ecran=screen.screen(api,largueur,hauteur) 
     z_min=Dfonct.Calc_Z_Min(api)
     
     s = open("scriptest.txt", "r")
