@@ -1,0 +1,9 @@
+solo.sleep(5000);
+        //Click on (418.27484, 565.5)
+		solo.clickOnScreen(418.27484F, 565.5F);
+        //Click on (397.75, 561.5)
+		solo.clickOnScreen(397.75F, 561.5F);
+        //Sleep for 4891 milliseconds
+		solo.sleep(5000);
+        //Click on (437.75, 551.25)
+		solo.clickOnScreen(437.75F, 551.25F);
