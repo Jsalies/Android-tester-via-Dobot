@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ------------------------------------------------------------
 # the micro langage to lead the Dobot Magician
 #
@@ -7,16 +8,17 @@
 # "touch()"
 # "touch"
 # "wait(number)"
+# "scroll(number,number,number,number)"
+#
 # the three choises can be written with or without spaces
 # the three choises allowed lower and upper cases.
 # "touch" can be written with or without brackets
 # ------------------------------------------------------------
+
 import ply.lex as lex
 import ply.yacc as yacc
 import time
-import DobotDllType as dType
 import Dobotfunctions as Dfonct
-import screen as screen
 
 # we define the required tokens for our langage.
 tokens = (
@@ -27,6 +29,7 @@ tokens = (
    'move',
    'touch',
    'wait',
+   'scroll',
 )
 
 # we define the characters which represente each token
@@ -37,8 +40,14 @@ t_separator   = r','
 t_move        = r'(?i)Mov'
 t_touch       = r'(?i)Touch'
 t_wait        = r'(?i)Wait'
+t_scroll      = r'(?i)Scroll'
 t_ignore_space  = r'\s'
 
+# we define the robot/screen's specialization
+
+api=None
+ecran=None
+z_min=None
 
 # we define the special characters representing special tokens
     
@@ -63,6 +72,8 @@ def p_move(p):
              | attendre
              | toucher commande
              | toucher
+             | scroller commande
+             | scroller
              '''
 
 # when we meet "move(number,number)"
@@ -86,6 +97,12 @@ def p_attendre(p):
     print "pause de : " + p[3] + "ms"
     time.sleep(float(p[3])/1000.)
 
+def p_scroller(p):
+    ''' scroller : scroll lbracket digit separator digit separator digit separator digit rbracket'''
+    coord1=ecran.Calc_Coordinates(p[3],p[5])
+    coord2=ecran.Calc_Coordinates(p[7],p[9])
+    print ("scroll from ({}({} pixels),{}({} pixels)) to ({}({} pixels),{}({} pixels))".format(coord1[0],p[3],coord1[1],p[5],coord2[0],p[7],coord2[1],p[9]))
+    Dfonct.Scroll(api,coord1[0],coord1[1],coord2[0],coord2[1],z_min)
 
 # if we meet a grammar error in our input file
 def p_error(p):
@@ -94,31 +111,18 @@ def p_error(p):
     else:
         print("Syntax error at EOF")
  
-# Build the lexer
-lexer = lex.lex()
 
-#init the robot
-
-CON_STR = {
-    dType.DobotConnect.DobotConnect_NoError:  "DobotConnect_NoError",
-    dType.DobotConnect.DobotConnect_NotFound: "DobotConnect_NotFound",
-    dType.DobotConnect.DobotConnect_Occupied: "DobotConnect_Occupied"}
+#we define our robot, our screen (smartphone) and our file to execute (with the langage)
+def robot(robot,Ecran,Zmin,file):
+    """we define our robot, our test screen and our input to execute our code from the input"""
+    global api
+    api=robot
+    global ecran
+    ecran=Ecran
+    global z_min
+    z_min=Zmin
     
-api = dType.load()
-state = dType.ConnectDobot(api, "", 115200)[0]
-print("[Etat de la connexion / Connect status : {}] \n".format(CON_STR[state]))
-
-if (state == dType.DobotConnect.DobotConnect_NoError):
-    
-    # Build the parser
-    yacc.yacc()
-    largueur=raw_input("veuillez entrer la largueur (en pixels) de l'ecran : ")
-    hauteur=raw_input("veuillez entrer la hauteur (en pixels) de l'ecran : ")
-    Dfonct.Init(api)    
-    ecran=screen.screen(api,largueur,hauteur) 
-    z_min=Dfonct.Calc_Z_Min(api)
-    
-    s = open("scriptest.txt", "r")
+    s = open(file, "r")
 
     chaine=""
     for ligne in s:
@@ -126,8 +130,9 @@ if (state == dType.DobotConnect.DobotConnect_NoError):
 
     s.close
     
+    # we survey that the langage is respected
+    lex.lex()
+    # we survey that the grammar is respected
+    yacc.yacc()
+    # we interpret our grammar
     yacc.parse(chaine)
-
-#Disconnect Dobot
-print("fermeture de la connexion")
-dType.DisconnectDobot(api)

@@ -22,7 +22,7 @@ def Init(api):
     #Async Home
     dType.SetHOMECmd(api, temp = 0, isQueued = 1)
     #Useless movement which permit to wait the init end.
-    tempo=tempo=dType.SetPTPCmd(api, dType.PTPMode.PTPMOVLXYZMode, 210, 0, 135, 0, isQueued = 1)[0]
+    tempo=dType.SetPTPCmd(api, dType.PTPMode.PTPMOVLXYZMode, 210, 0, 135, 0, isQueued = 1)[0]
     #Start to Execute Command Queued
     dType.SetQueuedCmdStartExec(api)
     #Wait for Executing Last Command 

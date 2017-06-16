@@ -5,9 +5,9 @@ _tabversion = '3.5'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'AAC26FA08E1C658BE3E693C10E29EC79'
+_lr_signature = '778214372C06552A64C3E336B05F0BE6'
     
-_lr_action_items = {'digit':([9,13,17,],[14,16,19,]),'move':([0,1,3,5,6,15,18,20,],[2,2,2,-9,2,-8,-10,-7,]),'lbracket':([2,5,7,],[9,11,13,]),'separator':([14,],[17,]),'touch':([0,1,3,5,6,15,18,20,],[5,5,5,-9,5,-8,-10,-7,]),'rbracket':([11,16,19,],[15,18,20,]),'wait':([0,1,3,5,6,15,18,20,],[7,7,7,-9,7,-8,-10,-7,]),'$end':([1,3,4,5,6,8,10,12,15,18,20,],[-6,-2,0,-9,-4,-5,-1,-3,-8,-10,-7,]),}
+_lr_action_items = {'digit':([12,16,17,22,23,28,30,],[18,20,21,25,26,29,31,]),'move':([0,1,2,4,6,7,19,24,27,32,],[3,3,3,3,-11,3,-10,-12,-9,-13,]),'lbracket':([3,6,8,9,],[12,14,16,17,]),'separator':([18,20,26,29,],[22,23,28,30,]),'touch':([0,1,2,4,6,7,19,24,27,32,],[6,6,6,6,-11,6,-10,-12,-9,-13,]),'rbracket':([14,21,25,31,],[19,24,27,32,]),'wait':([0,1,2,4,6,7,19,24,27,32,],[9,9,9,9,-11,9,-10,-12,-9,-13,]),'scroll':([0,1,2,4,6,7,19,24,27,32,],[8,8,8,8,-11,8,-10,-12,-9,-13,]),'$end':([1,2,4,5,6,7,10,11,13,15,19,24,27,32,],[-6,-8,-2,0,-11,-4,-5,-7,-1,-3,-10,-12,-9,-13,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'toucher':([0,1,3,6,],[1,1,1,1,]),'bouger':([0,1,3,6,],[3,3,3,3,]),'attendre':([0,1,3,6,],[6,6,6,6,]),'commande':([0,1,3,6,],[4,8,10,12,]),}
+_lr_goto_items = {'toucher':([0,1,2,4,7,],[1,1,1,1,1,]),'bouger':([0,1,2,4,7,],[4,4,4,4,4,]),'attendre':([0,1,2,4,7,],[7,7,7,7,7,]),'commande':([0,1,2,4,7,],[5,10,11,13,15,]),'scroller':([0,1,2,4,7,],[2,2,2,2,2,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,14 +26,17 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> commande","S'",1,None,None,None),
-  ('commande -> bouger commande','commande',2,'p_move','robot.py',56),
-  ('commande -> bouger','commande',1,'p_move','robot.py',57),
-  ('commande -> attendre commande','commande',2,'p_move','robot.py',58),
-  ('commande -> attendre','commande',1,'p_move','robot.py',59),
-  ('commande -> toucher commande','commande',2,'p_move','robot.py',60),
-  ('commande -> toucher','commande',1,'p_move','robot.py',61),
-  ('bouger -> move lbracket digit separator digit rbracket','bouger',6,'p_bouger','robot.py',66),
-  ('toucher -> touch lbracket rbracket','toucher',3,'p_toucher','robot.py',71),
-  ('toucher -> touch','toucher',1,'p_toucher','robot.py',72),
-  ('attendre -> wait lbracket digit rbracket','attendre',4,'p_attendre','robot.py',78),
+  ('commande -> bouger commande','commande',2,'p_move','robot.py',69),
+  ('commande -> bouger','commande',1,'p_move','robot.py',70),
+  ('commande -> attendre commande','commande',2,'p_move','robot.py',71),
+  ('commande -> attendre','commande',1,'p_move','robot.py',72),
+  ('commande -> toucher commande','commande',2,'p_move','robot.py',73),
+  ('commande -> toucher','commande',1,'p_move','robot.py',74),
+  ('commande -> scroller commande','commande',2,'p_move','robot.py',75),
+  ('commande -> scroller','commande',1,'p_move','robot.py',76),
+  ('bouger -> move lbracket digit separator digit rbracket','bouger',6,'p_bouger','robot.py',81),
+  ('toucher -> touch lbracket rbracket','toucher',3,'p_toucher','robot.py',88),
+  ('toucher -> touch','toucher',1,'p_toucher','robot.py',89),
+  ('attendre -> wait lbracket digit rbracket','attendre',4,'p_attendre','robot.py',96),
+  ('scroller -> scroll lbracket digit separator digit separator digit separator digit rbracket','scroller',10,'p_scroller','robot.py',101),
 ]
