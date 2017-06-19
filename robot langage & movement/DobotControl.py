@@ -17,7 +17,7 @@ CON_STR = {
 def main(argv):
     useful_flags =["simulationfile", "screenwidth", "screenheight"]
     if not [f for f in useful_flags if FLAGS.get(f,None) is not None]:
-        print (__doc__.string())
+       # print (__doc__.string())
         print (FLAGS.MainModuleHelp())
         return
     
@@ -41,7 +41,7 @@ def main(argv):
     print("Fermeture de la connexion")      
     dType.DisconnectDobot(api)
 
-if __name == '__main__':
+if __name__ == '__main__':
     #define flags here to avoid conflicts with peaple who use us as a library
     flags.DEFINE_string("simulationfile", None, "Simulation file")
     flags.DEFINE_integer("screenwidth", None, "Simulation screen width")
