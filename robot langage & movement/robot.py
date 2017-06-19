@@ -94,7 +94,7 @@ def p_toucher(p):
 #when we meet "wait(xxx)"
 def p_attendre(p):
     ''' attendre : wait lbracket digit rbracket'''
-    print "pause de : " + p[3] + "ms"
+    print ("pause de : " + p[3] + "ms")
     time.sleep(float(p[3])/1000.)
 
 def p_scroller(p):
