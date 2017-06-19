@@ -4,6 +4,8 @@ from Tkinter import *
 from PIL import Image, ImageTk
 import os
             
+#-----------------------------DEFINITION DE L'INTERFACE GRAPHIQUE-----------------------------------    
+      
 #definition des variables globals
 pourcent=0
 
@@ -113,8 +115,7 @@ def Init():
     H=Hauteur.get()
     Nb=Nbscenar.get()
     Scenar=liste.get(liste.curselection())
-    print "largueur : {}, hauteur : {}, nombre d\'essaies : {}, scénario : {}".format(L,H,Nb,Scenar)
-    Afficheur("1").start()
+    print "bob"
     
     
 #definition du bouton LANCER
