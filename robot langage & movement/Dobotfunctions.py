@@ -86,7 +86,7 @@ def Scroll(api,x_begin,y_begin,x_end,y_end,z_min):
 def coordinates(api,letter):
     raw_input("mettre le bras robotic sur (puis ENTRER) / put the robot arm on (THEN ENTER) : {}".format(letter))
     a=dType.GetPose(api)
-    print "OK"
+    print ("OK")
     return a[0:2]
     
 def Keyboard_Calibration(api,firstline,secondline,thirdline):
