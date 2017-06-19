@@ -53,7 +53,7 @@ def start_test_case(package, width, height):
 	# Start the test case
 	print("Test case start running")
 	start = time.time()
- 	subprocess.call("python DobotControl.py --simulationfile=" + package + " --screenwidth=" + str(width) + " --screenheight=" + str(height), shell=True, universal_newlines=True)
+        
  	test_duration = time.time() - start
  	flag = True
  	time.sleep(10)
