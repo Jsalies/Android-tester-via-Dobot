@@ -23,13 +23,15 @@ def main(argv):
     
     #Load Dll
     api = dType.load()
+    #print(dType.SearchDobot())
 
     #Connect Dobot
-    state = dType.ConnectDobot(api, "", 115200)[0]
+    state = dType.ConnectDobot(api, "ttyUSB0", 115200)[0]
     print("[Etat de la connexion / Connect status : {}] \n".format(CON_STR[state]))
 
     #if the robot has the well state
-    if (state == dType.DobotConnect.DobotConnect_NoError):
+    """state == dType.DobotConnect.DobotConnect_NoError"""
+    if ( True):
         # we define our work environnement
         Dfonct.Init(api)
         ecran=Screen.screen(api,int(FLAGS.screenwidth),int(FLAGS.screenheight)) 
@@ -37,6 +39,7 @@ def main(argv):
     
         # we launch our langage through the robot
         Langage.robot(api,ecran,z_min,str(FLAGS.simulationfile))
+        print("execution terminee")
   
     print("Fermeture de la connexion")      
     dType.DisconnectDobot(api)
