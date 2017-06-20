@@ -9,9 +9,13 @@ class Afficheur(Thread):
 
     """Thread chargé simplement d'afficher une lettre dans la console."""
 
-    def __init__(self,fenetre):
+    def __init__(self,fenetre,largueur,longueur,repetition,scenar):
         Thread.__init__(self)
         self.fenetre=fenetre
+        self.largueur=largueur
+        self.longueur=longueur
+        self.repetition=repetition
+        self.scenar=scenar
         
     def run(self):
         """Code à exécuter pendant l'exécution du thread."""
