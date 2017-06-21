@@ -18,7 +18,7 @@ class Interface():
         #definition de l'arriere plan
         self.monfond = Image.open("background.jpeg")
         self.background = ImageTk.PhotoImage(self.monfond) 
-        Label(self.fenetre,image=self.background).place(x=-2,y=-2) 
+        self.Fond=Label(self.fenetre,image=self.background).place(x=-2,y=-2) 
         #definition des titres
         self.txt1 = Label(self.fenetre, text ='caractéristiques de l\'écran du téléphone :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
         self.txt2 = Label(self.fenetre, text ='instructions :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
@@ -36,8 +36,8 @@ class Interface():
         self.txt6.place(height=20,width=124,x=138,y=190)
         self.txt7.place(height=20,width=120,x=540,y=190)
         #definitions des entrées
-        self.Longueur = Spinbox(self.fenetre, from_=0, to=10000,bg="gray")
-        self.Hauteur = Spinbox(self.fenetre, from_=0, to=10000,bg="gray")
+        self.Longueur = Spinbox(self.fenetre, from_=1, to=10000,bg="gray")
+        self.Hauteur = Spinbox(self.fenetre, from_=1, to=10000,bg="gray")
         self.Nbscenar = Spinbox(self.fenetre, from_=1, to=500,bg="gray")
         #placement des entrées
         self.Longueur.place(height=20,width=150,x=170,y=50)
@@ -57,6 +57,10 @@ class Interface():
         self.sc.place(height=200,width=20,x=350,y=230)
         #configuration de la barre de scroll
         self.liste.configure(yscrollcommand=self.sc.set)
+        #on defini une case à cocher
+        self.tousScenarios= IntVar()
+        self.toutfaire = Checkbutton(self.fenetre,variable=self.tousScenarios, text="Tout tester",bg="gray",activebackground="gray")        
+        self.toutfaire.place(height=15,width=80,x=270,y=410)
         #on definit une variable
         self.TexteInstructions = StringVar()
         self.TexteInstructions.set("Veuillez suivre les instructions apparaissantes ici.")
@@ -67,8 +71,23 @@ class Interface():
         self.TexteMesureEnergie = StringVar()
         self.TexteMesureEnergie.set("Ici apparaitrons les résultats du test")
         #on defini notre zone de texte
-        self.MesureEnergie=Label(self.fenetre,textvariable=self.TexteMesureEnergie,bg='gray',relief='sunken',anchor='nw')
-        self.MesureEnergie.place(height=200,width=350,x=425,y=230)
+        self.MesureEnergie=Label(self.fenetre,textvariable=self.TexteMesureEnergie,justify="left",bg='gray',relief='sunken',anchor='nw')
+        self.MesureEnergie.place(height=120,width=350,x=425,y=230)
+        #on defini notre fond pour le choix de l'oscilloscope
+        self.MesureEnergie=Label(self.fenetre,bg='gray',relief='sunken',anchor='nw')
+        self.MesureEnergie.place(height=65,width=350,x=425,y=365)
+        # on defini les boutons pour choisir l'oscilloscope
+        self.txt8 = Label(self.fenetre, text ='choix de l\'oscilloscope :',fg="black",font=("Helvetica", 10, "bold italic"),bg="gray")
+        self.txt8.place(height=20,width=200,x=510,y=370)
+        self.ChoixOscillo = StringVar() 
+        self.oscillo1 = Radiobutton(self.fenetre, text="HS5", variable=self.ChoixOscillo, value=1,bg="gray",activebackground="gray")
+        self.oscillo2 = Radiobutton(self.fenetre, text="GPS-4303", variable=self.ChoixOscillo, value=2,bg="gray",activebackground="gray")
+        self.oscillo3 = Radiobutton(self.fenetre, text="Pmonitor", variable=self.ChoixOscillo, value=3,bg="gray",activebackground="gray")        
+        self.oscillo1.select()        
+        # on place les boutons pour choisir l'oscilloscope        
+        self.oscillo1.place(y=400,x=577)
+        self.oscillo2.place(y=400,x=440)
+        self.oscillo3.place(y=400,x=683)
         #on definit une variable (% de la barre)
         self.pourcentafficher = StringVar()
         self.pourcentafficher.set("0%")
@@ -83,14 +102,16 @@ class Interface():
             value=float(self.pourcent)*5.88
             self.bar = Canvas(self.Loading, width=600,height=100,bg='white',borderwidth=0)
             self.bar.place(height=38,width=value,x=7,y=7)
-            self.bar.create_image(300,0,image=self.photo)       
+            self.bar.create_image(300,0,image=self.photo)      
         boost()
         def Init():
             L=self.Longueur.get()
             H=self.Hauteur.get()
             Nb=self.Nbscenar.get()
             Scenar=self.liste.get(self.liste.curselection())
-            thread1=simulation.Simulation(self,L,H,Nb,Scenar)
+            oscillochoisi=self.ChoixOscillo.get()
+            toutfaire=self.tousScenarios.get()
+            thread1=simulation.Simulation(self,L,H,Nb,Scenar,oscillochoisi,toutfaire)
             thread1.start()
         #definition du bouton LANCER
         self.bouton = Button(self.fenetre, text='LANCER',bg='#797DF6',font=("ms serif", 10, "bold"), command=Init)

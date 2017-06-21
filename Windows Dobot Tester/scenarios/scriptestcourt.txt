@@ -1,2 +1,14 @@
-test.apk
-mov(0,0) touch()
+ch.smalltech.ledflashlight.free.apk
+mov(0,0)
+touch()
+mov(100, 0) 
+touch()
+mov(200, 0) 
+touch()
+mov(300, 0) 
+touch()
+mov(400, 0) 
+touch()
+mov(500, 0) 
+touch()
+mov(1000, 1000) 

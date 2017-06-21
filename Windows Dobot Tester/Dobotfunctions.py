@@ -37,17 +37,15 @@ def Calc_Z_Min(api,fenetre):
     le placiez à sa valeur la plus basse de z
     SECURITY : the robot will wait that you put
     the robotic arm at is lowest z value"""
-    fenetre.setInstruction("""[CALIBRAGE / CALIBRATION]
-#[placez le robot en position d'appuie / lean the robot on a button]
-#[puis appuyer sur ENTRER / then press ENTER]""")
-    fenetre.entrer=0
+    fenetre.setInstruction("""--------------------CALIBRAGE / CALIBRATION--------------------
+ placez le robot en position d'appuie / lean the robot on a button
+------------puis appuyer sur ENTRER / then press ENTER------------""")
     fenetre.desactive()
     while fenetre.entrer==0:
         {
         }
     fenetre.desactive()
     a=dType.GetPose(api)
-    print ("[Z's value / Valeur de z : {}]\n".format(int(a[2])))
     return a[2]
     
 def Position(api):
