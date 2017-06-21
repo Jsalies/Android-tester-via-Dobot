@@ -2,7 +2,7 @@
 from Tkinter import *
 from PIL import Image, ImageTk
 import os
-import test2
+import simulation
 
 class Interface():
     
@@ -90,13 +90,23 @@ class Interface():
             H=self.Hauteur.get()
             Nb=self.Nbscenar.get()
             Scenar=self.liste.get(self.liste.curselection())
-            thread1=test2.Simulation(self,L,H,Nb,Scenar)
+            thread1=simulation.Simulation(self,L,H,Nb,Scenar)
             thread1.start()
         #definition du bouton LANCER
         self.bouton = Button(self.fenetre, text='LANCER',bg='#797DF6',font=("ms serif", 10, "bold"), command=Init)
         #placement du bouton LANCER
         self.bouton.place(height=30,width=100,x=350,y=460)
-
+        #on crée une variable pour savoir quand on appuie sur entrer
+        self.entrer=0
+        #on incremente une variable si la touche entrer est appuyée
+        def active(event):
+            self.entrer=1
+        #on génère l'evenement pour incrémenter notre variable
+        self.fenetre.bind_all('<Return>',active)
+     
+    def desactive(self):
+        self.entrer=0
+        
     def setInstruction(self,texte):
         self.TexteInstructions.set(texte)
         

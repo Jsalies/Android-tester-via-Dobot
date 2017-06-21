@@ -19,7 +19,6 @@ import ply.lex as lex
 import ply.yacc as yacc
 import time
 import Dobotfunctions as Dfonct
-import screen
 
 # we define the required tokens for our langage.
 tokens = (

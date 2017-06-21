@@ -39,19 +39,13 @@ class Simulation(Thread):
             #ouvrir le scénarios
             File=open("./scenarios/"+self.scenar,'r')
             #récuperer nom de l'apk
-            apk=File.readline()
-            
-            print apk         
-            
+            apk=File.readline()                
             #récuperer le language pour le robot
             lignecourante=File.readline()
             language=""
             while len(lignecourante)!=0:
                 language+=lignecourante
                 lignecourante=File.readline()
-                
-            print language
-            
             #fermer le fichier
             File.close
             #on initialise le robot
@@ -85,4 +79,4 @@ class Simulation(Thread):
             mesure=1
             #---------------------------------------------
             
-            self.fenetre.setMesureEnergie("la consommation total du telephone est de {}Watts pour {} tests. Soit {}Watts par tests.".format(mesure,self.repetition,float(mesure)/float(self.repetition)))
+            self.fenetre.setMesureEnergie("la consommation total du telephone est de {}Watts\n pour {} tests.\nSoit {}Watts par tests.".format(mesure,self.repetition,float(mesure)/float(self.repetition)))
