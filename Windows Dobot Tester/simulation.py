@@ -80,3 +80,11 @@ class Simulation(Thread):
             #---------------------------------------------
             
             self.fenetre.setMesureEnergie("la consommation total du telephone est de {}Watts\n pour {} tests.\nSoit {}Watts par tests.".format(mesure,self.repetition,float(mesure)/float(self.repetition)))
+
+    def installApk(apkName):
+        return subprocess.check_output("adb install " + apkName , shell=True, universal_newlines=True)
+
+    def uninstallApk(apkName):
+        return subprocess.check_output("adb uninstall " + apkName , shell=True,universal_newlines=True)
+
+        
