@@ -55,9 +55,7 @@ class screen:
         if y3<=y1:
             angle2=-angle2
             
-        angle3=(angle+angle2)/2.
-        
-        print(angle,angle2,angle3)        
+        angle3=(angle+angle2)/2.    
         
         # on change la norme de la base 2
         x_b2=float(x_pixel)/float(self.pixelwidth)*self.Hori_distance

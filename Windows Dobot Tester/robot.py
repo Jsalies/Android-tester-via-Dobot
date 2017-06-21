@@ -80,7 +80,6 @@ def p_move(p):
 def p_bouger(p):
     ''' bouger : move lbracket digit separator digit rbracket'''
     coord=ecran.Calc_Coordinates(p[3],p[5])
-    print ("go to : ({}({}pixels),{}({}pixels)".format(coord[0],p[3],coord[1],p[5]))
     Dfonct.Movement(api,coord[0],coord[1],z_min+30)
     
 #when we meet "touch"/"touch()
@@ -88,20 +87,17 @@ def p_toucher(p):
     ''' toucher : touch lbracket rbracket
                 | touch
                 '''
-    print ("touch")
     Dfonct.Touch(api,z_min)
 
 #when we meet "wait(xxx)"
 def p_attendre(p):
     ''' attendre : wait lbracket digit rbracket'''
-    print ("pause de : " + p[3] + "ms")
     time.sleep(float(p[3])/1000.)
 
 def p_scroller(p):
     ''' scroller : scroll lbracket digit separator digit separator digit separator digit rbracket'''
     coord1=ecran.Calc_Coordinates(p[3],p[5])
     coord2=ecran.Calc_Coordinates(p[7],p[9])
-    print ("scroll from ({}({} pixels),{}({} pixels)) to ({}({} pixels),{}({} pixels))".format(coord1[0],p[3],coord1[1],p[5],coord2[0],p[7],coord2[1],p[9]))
     Dfonct.Scroll(api,coord1[0],coord1[1],coord2[0],coord2[1],z_min)
 
 # if we meet a grammar error in our input file
