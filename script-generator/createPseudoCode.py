@@ -24,12 +24,12 @@ def main(argv):
         elif opt in ("-i", "--ifile"):
             inputfilePath = arg
     outputFile = open(inputfilePath+".out", 'w')
-    outputFile.write(inputFilePath +'\n)
+    outputFile.write(inputfilePath +'\n')
     for line in open(inputfilePath,'r'):
         if line.find("//") < 0 and len(line.strip()) >0:
             processedLine = process(line.strip()).strip('')
             if processedLine.find("mov") >= 0 :
-                processedLine += "touch()"
+                processedLine += "\ntouch()"
             outputFile.write(processedLine +'\n')
     outputFile.close()
 
