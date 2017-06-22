@@ -23,8 +23,8 @@ def main(argv):
             sys.exit()
         elif opt in ("-i", "--ifile"):
             inputfilePath = arg
-    outputFile = open(inputfilePath+".out", 'w')
-    outputFile.write(inputfilePath +'\n')
+    outputFile = open(inputfilePath[0:inputfilePath.rfind('.')] + ".sim", 'w')
+    outputFile.write(inputfilePath[0:inputfilePath.rfind('.')] +'\n')
     for line in open(inputfilePath,'r'):
         if line.find("//") < 0 and len(line.strip()) >0:
             processedLine = process(line.strip()).strip('')

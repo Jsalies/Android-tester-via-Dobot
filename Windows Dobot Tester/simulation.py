@@ -99,4 +99,20 @@ def installApk(apkName):
 def uninstallApk(apkName):
     return subprocess.check_output("C:\Users\Administrateur\AppData\Local\Android\sdk\platform-tools\\adb uninstall " + apkName , shell=True,universal_newlines=True)
 
+
+def startApk(apkName):
+    """
+    apkname sans le apk
+    :param apkName: 
+    :return: 
+    """
+    subprocess.check_output("C:\Users\Administrateur\AppData\Local\Android\sdk\platform-tools\\adb shell am start -a " + apkName)
         
+
+def closeApk(apkName):
+    """
+    apkname sans le apk
+    :param apkName: 
+    :return: 
+    """
+    subprocess.check_output("C:\Users\Administrateur\AppData\Local\Android\sdk\platform-tools\\adb shell am force-stop " + apkName)
