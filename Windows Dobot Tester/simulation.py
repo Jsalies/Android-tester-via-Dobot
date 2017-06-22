@@ -128,3 +128,19 @@ def calculAire(temps,valeurs):
     for i in range(1,len(temps)):
         aire+=(temps[i]-temps[i-1])/2.*(valeurs[i]+valeurs[i-1])
     return aire
+
+def startApk(apkName):
+    """
+    apkname sans le apk
+    :param apkName: 
+    :return: 
+    """
+    subprocess.check_output("C:\Users\Administrateur\AppData\Local\Android\sdk\platform-tools\\adb shell am start -a " + apkName)
+        
+def closeApk(apkName):
+    """
+    apkname sans le apk
+    :param apkName: 
+    :return: 
+    """
+    subprocess.check_output("C:\Users\Administrateur\AppData\Local\Android\sdk\platform-tools\\adb shell am force-stop " + apkName)
