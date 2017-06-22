@@ -1,0 +1,13 @@
+com.discolight
+mov(325.0, 55.75) 
+touch()
+mov(385.5, 1042.0) 
+touch()
+wait(5000) 
+mov(393.75, 1060.0) 
+touch()
+mov(395.75, 1032.5) 
+touch()
+wait(5000) 
+mov(388.70233, 1036.5) 
+touch()

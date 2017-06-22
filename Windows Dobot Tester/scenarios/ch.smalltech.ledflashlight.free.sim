@@ -1,0 +1,9 @@
+ch.smalltech.ledflashlight.free
+wait(5000) 
+mov(533.5, 405.2902) 
+touch()
+mov(576.5, 433.5) 
+touch()
+wait(5000) 
+mov(605.37006, 441.62994) 
+touch()

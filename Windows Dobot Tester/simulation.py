@@ -49,7 +49,7 @@ class Simulation(Thread):
             #on entre les données de notre écran
             ecran=screen.screen(api,self.largueur,self.longueur,self.fenetre)
             # pour informer l'utilisateur
-            self.fenetre.setInstruction("Démarrage de la simulation.")
+            self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
             #on regarde si nous faisons le test sur un ou plusieurs scénarios
             Filelist=[]
             if self.tousScenarios==1:
@@ -62,7 +62,7 @@ class Simulation(Thread):
                 #ouvrir le scénarios
                 File=open("./scenarios/"+scenars,'r')
                 #récuperer nom de l'apk
-                apk=File.readline()                
+                apk=(File.readline()).strip('\n')                
                 #récuperer le language pour le robot
                 lignecourante=File.readline()
                 language=""
@@ -83,29 +83,26 @@ class Simulation(Thread):
                     return
                 else:
                     Mesure=OEC.OscilloscopeEnergyCollector()
-                    Mesure.start("./results/"+apk+".txt")
                 
                 #on recupere le chemin absolu de l'apk
                 try:
-                    chemin=os.path.abspath("./apk/"+apk)
+                    chemin=os.path.abspath("./apk/"+apk+".apk")
                 except:
                     self.fenetre.setInstruction("l'apk spécifié en ligne 1 dans le fichier scénario \nn'est pas présent dans le fichier apk. \nVeuillez l'ajouter ou modifier son nom.")
                     return
-                    
+                self.fenetre.setInstruction("installation de l'apk")
+                installApk(chemin)
+                self.fenetre.setInstruction("test de l'application")
                 for i in range(1,int(self.repetition)+1):
-                    installApk(chemin)
+                    Mesure.start("./results/"+apk+str(i)+".txt")
+                    startApk(apk)
                     robot.Robot(api,ecran,self.fenetre,Z_min,language,valeurligne,float(i-1)/float(self.repetition)*100.).action()
-                    uninstallApk(apk[0:-5])
+                    closeApk(apk)
+                    Mesure.stop()
                     self.fenetre.setpourcent(float(i)/float(self.repetition)*100.)
-                
+                self.fenetre.setInstruction("desinstallation de l'apk")
+                uninstallApk(apk)
                 self.fenetre.setpourcent(100)
-                
-                #on lance la mesure d'energie dans l'oscilloscope
-                if self.choixOscillo==2:
-                    {}
-                else:
-                    {}
-                
                 #---------------------------------------------
                 # RECUPERER MESURE
                 mesure=1
@@ -117,10 +114,10 @@ class Simulation(Thread):
         dType.DisconnectDobot(api)
         
 def installApk(apkName):
-    return subprocess.check_output("\"C:\Users\Administrateur\AppData\Local\Android\sdk\platform-tools\\adb\" install " + "\"" + apkName + "\"" , shell=True, universal_newlines=True)
+    return subprocess.check_output(".\platform-tools\\adb install " + "\"" + apkName + "\"" , shell=True, universal_newlines=True)
 
 def uninstallApk(apkName):
-    return subprocess.check_output("C:\Users\Administrateur\AppData\Local\Android\sdk\platform-tools\\adb uninstall " + apkName , shell=True,universal_newlines=True)
+    return subprocess.check_output(".\platform-tools\\adb uninstall " + apkName , shell=True,universal_newlines=True)
 
 def calculAire(temps,valeurs):
     """ on prendra en entrée deux listes de même longueur qui representes les deux colonnes des tableaux excels"""
@@ -135,7 +132,7 @@ def startApk(apkName):
     :param apkName: 
     :return: 
     """
-    subprocess.check_output("C:\Users\Administrateur\AppData\Local\Android\sdk\platform-tools\\adb shell am start -a " + apkName)
+    subprocess.check_output(".\platform-tools\\adb shell am start -n " + apkName +"/"+apkName+".HomeFree")
         
 def closeApk(apkName):
     """
@@ -143,4 +140,4 @@ def closeApk(apkName):
     :param apkName: 
     :return: 
     """
-    subprocess.check_output("C:\Users\Administrateur\AppData\Local\Android\sdk\platform-tools\\adb shell am force-stop " + apkName)
+    subprocess.check_output(".\platform-tools\\adb shell am force-stop " + apkName)
