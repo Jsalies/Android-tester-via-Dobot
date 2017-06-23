@@ -50,8 +50,6 @@ class Simulation(Thread):
             Z_min=Dfonct.Calc_Z_Min(api,self.fenetre)
             #on entre les données de notre écran
             ecran=screen.screen(api,self.largueur,self.longueur,self.fenetre)
-            # pour informer l'utilisateur
-            self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
             #on regarde si nous faisons le test sur un ou plusieurs scénarios
             Filelist=[]
             if self.tousScenarios==1:
@@ -59,12 +57,23 @@ class Simulation(Thread):
                      Filelist.append(fichier)
             else:
                 Filelist.append(self.scenar)
+            # pour informer l'utilisateur
+            self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
+            #on lance la mesure d'energie dans l'oscilloscope
+            if self.choixOscillo==2:
+                self.fenetre.setInstruction("Oscilloscope non présent\nou pilote non installé.\nVeuillez régler le problème puis réessayer")
+                dType.DisconnectDobot(api)
+                return
+            else:
+                Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence)
             #on test le nombre de scénarios souhaités
             for scenars in Filelist:
                 #ouvrir le scénarios
                 File=open("./scenarios/"+scenars,'r')
                 #récuperer nom de l'apk
-                apk=(File.readline()).strip('\n')                
+                apk=scenars.strip('.')
+                #recuperer le package pour le focus
+                package=(File.readline()).strip('\n')               
                 #récuperer le language pour le robot
                 lignecourante=File.readline()
                 language=""
@@ -77,15 +86,6 @@ class Simulation(Thread):
                 valeurligne=1./(float(valeurligne+1)*float(self.repetition))*100.
                 #fermer le fichier
                 File.close
-                
-                #on lance la mesure d'energie dans l'oscilloscope
-                if self.choixOscillo==2:
-                    self.fenetre.setInstruction("Oscilloscope non présent\nou pilote non installé.\nVeuillez régler le problème puis réessayer")
-                    dType.DisconnectDobot(api)
-                    return
-                else:
-                    Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence)
-                
                 #on recupere le chemin absolu de l'apk
                 try:
                     chemin=os.path.abspath("./apk/"+apk+".apk")
@@ -98,7 +98,7 @@ class Simulation(Thread):
                 Consomme=0                
                 for i in range(1,int(self.repetition)+1):
                     Mesure.start("./results/"+apk+str(i)+".csv")
-                    startApk(apk)
+                    startApk(apk,package)
                     robot.Robot(api,ecran,self.fenetre,Z_min,language,valeurligne,float(i-1)/float(self.repetition)*100.).action()
                     closeApk(apk)
                     Mesure.stop()
@@ -118,13 +118,13 @@ def installApk(apkName):
 def uninstallApk(apkName):
     return subprocess.check_output(".\platform-tools\\adb uninstall " + apkName , shell=True,universal_newlines=True)
 
-def startApk(apkName):
+def startApk(apkName,packageName):
     """
     apkname sans le apk
     :param apkName: 
     :return: 
     """
-    subprocess.check_output(".\platform-tools\\adb shell am start -n " + apkName +"/"+apkName+".HomeFree")
+    subprocess.check_output(".\platform-tools\\adb shell am start -n " + apkName +"/"+ packageName)
         
 def closeApk(apkName):
     """
