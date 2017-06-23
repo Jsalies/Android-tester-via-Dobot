@@ -14,10 +14,10 @@ CALLBACK_DATA_OVERFLOW = CFUNCTYPE(None, c_void_p)
 
 class OscilloscopeEnergyCollector:
 
-    def __init__(self):
+    def __init__(self,frequence):
         self.func_data_ready = CALLBACK_DATA_READY(self.myfunction1)
         self.func_data_overflow = CALLBACK_DATA_OVERFLOW(self.myfunction2)
-        self.frequency = 10000  # Frequency to be set in the oscilloscope to measure
+        self.frequency = frequence  # Frequency to be set in the oscilloscope to measure
         self.dataRead = []
         self.USING_UCURRENT_DEVICE = True
         self.TIME_INIT = 0
@@ -131,7 +131,7 @@ class OscilloscopeEnergyCollector:
     def saveDataToFileCalculatingPowerUsinguCurrent(self, filePath, data, time, freq):
         csv_file = open(filePath, 'w+')
         try:
-            csv_file.write("Time(usecs),CH1,CH2,Power,Energy" + os.linesep)
+            csv_file.write("Time(usecs),CH1,CH2,Power,Energy" + "\n")
 
             # Write csv file
             period = (1.0 / freq) * 1e6
@@ -151,8 +151,7 @@ class OscilloscopeEnergyCollector:
                     csv_file.write(str(v1) + ',')  # voltage in phone (from power supply)
                     csv_file.write(str(v2) + ',')  # voltage = current in resistor (using ucurrent)
                     csv_file.write(str(power) + ',')  # power on phone
-                    csv_file.write(str(energy))  # energy on phone
-                    csv_file.write(os.linesep)
+                    csv_file.write(str(energy)+"\n")  # energy on phone
                 block = block + 2
 
         except Exception as e:
@@ -167,7 +166,7 @@ class OscilloscopeEnergyCollector:
         csv_file = open(filePath, 'w+')
         try:
             # csv_file.write("Time(usecs),CH1,CH2,Power,Energy" + os.linesep)
-            csv_file.write("Time(usecs),Power" + os.linesep)
+            csv_file.write("Time(usecs),Power" + "\n")
 
             # Write csv file
             period = (1.0 / freq) * 1e6
@@ -183,12 +182,10 @@ class OscilloscopeEnergyCollector:
                     current = voltageDifference / resistor
                     power = v1 * current
                     energy = power * (1.0 / freq)
-
                     # csv_file.write(str(v1) + ',')  # voltage in phone (from power supply)
                     # csv_file.write(str(v2) + ',')  # voltage in resistor (using amplifier)
-                    csv_file.write(str(power))  # power on phone
+                    csv_file.write(str(power)+ "\n")  # power on phone
                     # csv_file.write(str(energy))  # energy on phone
-                    csv_file.write(os.linesep)
                 block = block + 2
         except Exception as e:
             print('Exception: ' + e.message)

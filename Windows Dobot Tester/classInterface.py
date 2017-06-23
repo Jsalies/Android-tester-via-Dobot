@@ -11,6 +11,7 @@ class Interface():
         self.pourcent=0
         #definition de la fenetre principale
         self.fenetre = Tk(className="Energy consumption tester - Dobot Magician")
+        self.fenetre.resizable(width=False, height=False)    
         self.Htrigger=(self.fenetre.winfo_screenwidth()-815)/2
         self.Vtrigger=(self.fenetre.winfo_screenheight()-615)/2
         self.fenetre.geometry('800x600+{}+{}'.format(self.Htrigger,self.Vtrigger))
@@ -36,9 +37,14 @@ class Interface():
         self.txt6.place(height=20,width=124,x=138,y=190)
         self.txt7.place(height=20,width=120,x=540,y=190)
         #definitions des entrées
-        self.Longueur = Spinbox(self.fenetre, from_=1, to=10000,bg="gray")
-        self.Hauteur = Spinbox(self.fenetre, from_=1, to=10000,bg="gray")
+        self.longvalue = IntVar()
+        self.hautvalue = IntVar()
+        self.longvalue.set(1000)
+        self.hautvalue.set(1000)
+        self.Longueur = Spinbox(self.fenetre,textvariable=self.longvalue, from_=1, to=10000,bg="gray")
+        self.Hauteur = Spinbox(self.fenetre,textvariable=self.hautvalue, from_=1, to=10000,bg="gray")
         self.Nbscenar = Spinbox(self.fenetre, from_=1, to=500,bg="gray")
+        self.Longueur.config()
         #placement des entrées
         self.Longueur.place(height=20,width=150,x=170,y=50)
         self.Hauteur.place(height=20,width=150,x=170,y=100)
@@ -78,14 +84,23 @@ class Interface():
         self.MesureEnergie.place(height=65,width=350,x=425,y=365)
         # on defini les boutons pour choisir l'oscilloscope
         self.txt8 = Label(self.fenetre, text ='choix de l\'oscilloscope :',fg="black",font=("Helvetica", 10, "bold italic"),bg="gray")
-        self.txt8.place(height=20,width=200,x=510,y=370)
+        self.txt8.place(height=20,width=200,x=437,y=370)
         self.ChoixOscillo = StringVar() 
         self.oscillo1 = Radiobutton(self.fenetre, text="HS5", variable=self.ChoixOscillo, value=1,bg="gray",activebackground="gray")
         self.oscillo2 = Radiobutton(self.fenetre, text="Monsoon", variable=self.ChoixOscillo, value=2,bg="gray",activebackground="gray")        
-        self.oscillo1.select()        
+        self.oscillo1.select()
         # on place les boutons pour choisir l'oscilloscope        
-        self.oscillo1.place(y=400,x=577)
+        self.oscillo1.place(y=400,x=580)
         self.oscillo2.place(y=400,x=440)
+        #○n defini les bouton pour régler la frequence de l'oscilloscope
+        self.txt9 = Label(self.fenetre, text ='frequence :',fg="black",font=("Helvetica", 10, "bold italic"),bg="gray")
+        self.txt9.place(height=20,width=100,x=665,y=370)    
+        self.txt10 = Label(self.fenetre, text ='Hz',fg="black",font=("Helvetica", 10, "bold italic"),bg="gray")
+        self.txt10.place(height=20,width=20,y=402,x=745)         
+        self.frequence = IntVar()   
+        self.frequence.set(10000)
+        self.valeurfrequence = Spinbox(self.fenetre,textvariable=self.frequence, from_=5000, to=200000,bg="gray")
+        self.valeurfrequence.place(width=80,height=20,y=402,x=665)
         #on definit une variable (% de la barre)
         self.pourcentafficher = StringVar()
         self.pourcentafficher.set("0%")

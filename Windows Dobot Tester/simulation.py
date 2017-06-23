@@ -8,6 +8,7 @@ import robot
 import subprocess
 import os
 import OscilloscopeEnergyCollector as OEC
+import csv
 
 class Simulation(Thread):
 
@@ -21,6 +22,7 @@ class Simulation(Thread):
         self.repetition=interface.Nbscenar.get()
         self.choixOscillo=interface.ChoixOscillo.get()
         self.tousScenarios=interface.tousScenarios.get()
+        self.valeurfrequence=interface.valeurfrequence.get()
         if self.tousScenarios==0:
             self.scenar=interface.liste.get(interface.liste.curselection())
         
@@ -82,7 +84,7 @@ class Simulation(Thread):
                     dType.DisconnectDobot(api)
                     return
                 else:
-                    Mesure=OEC.OscilloscopeEnergyCollector()
+                    Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence)
                 
                 #on recupere le chemin absolu de l'apk
                 try:
@@ -93,22 +95,19 @@ class Simulation(Thread):
                 self.fenetre.setInstruction("installation de l'apk")
                 installApk(chemin)
                 self.fenetre.setInstruction("test de l'application")
+                Consomme=0                
                 for i in range(1,int(self.repetition)+1):
-                    Mesure.start("./results/"+apk+str(i)+".txt")
+                    Mesure.start("./results/"+apk+str(i)+".csv")
                     startApk(apk)
                     robot.Robot(api,ecran,self.fenetre,Z_min,language,valeurligne,float(i-1)/float(self.repetition)*100.).action()
                     closeApk(apk)
                     Mesure.stop()
+                    Consomme+=calculCsv("./results/"+apk+str(i)+".csv")
                     self.fenetre.setpourcent(float(i)/float(self.repetition)*100.)
                 self.fenetre.setInstruction("desinstallation de l'apk")
                 uninstallApk(apk)
                 self.fenetre.setpourcent(100)
-                #---------------------------------------------
-                # RECUPERER MESURE
-                mesure=1
-                #---------------------------------------------
-                
-                self.fenetre.setMesureEnergie("la consommation total du telephone est de {}Watts\n pour {} tests.\nSoit {}Watts par tests.".format(mesure,self.repetition,float(mesure)/float(self.repetition)))
+                self.fenetre.setMesureEnergie("la consommation total du telephone est de {}milliWattsheure\n pour {} tests.\nSoit {}milliWattsheure par tests.".format(Consomme,self.repetition,float(Consomme)/float(self.repetition)))
         
         #on deconnecte le robot        
         dType.DisconnectDobot(api)
@@ -118,13 +117,6 @@ def installApk(apkName):
 
 def uninstallApk(apkName):
     return subprocess.check_output(".\platform-tools\\adb uninstall " + apkName , shell=True,universal_newlines=True)
-
-def calculAire(temps,valeurs):
-    """ on prendra en entrée deux listes de même longueur qui representes les deux colonnes des tableaux excels"""
-    aire=0
-    for i in range(1,len(temps)):
-        aire+=(temps[i]-temps[i-1])/2.*(valeurs[i]+valeurs[i-1])
-    return aire
 
 def startApk(apkName):
     """
@@ -141,3 +133,24 @@ def closeApk(apkName):
     :return: 
     """
     subprocess.check_output(".\platform-tools\\adb shell am force-stop " + apkName)
+
+def calculAire(temps,valeurs):
+    """ on prendra en entrée deux listes de même longueur qui representes les deux colonnes des tableaux excels"""
+    aire=0
+    for i in range(1,len(temps)):
+        aire+=(float(temps[i])-float(temps[i-1]))/2.*(float(valeurs[i])+float(valeurs[i-1]))
+    return aire
+
+def calculCsv(filename):
+    """ calcul la consommation du smartphone via un jeu de données"""
+    fichier = csv.reader(open(filename,"rb"))
+    liste=[[],[],[],[],[]]
+    for row in fichier:
+        liste[0].append(row[0])
+        liste[1].append(row[1])
+        liste[2].append(row[2])
+        liste[3].append(row[3])
+        liste[4].append(row[4])
+    # valeur en milliwatts
+    return calculAire(liste[0][1:-1],liste[3][1:-1])/(float(liste[0][-1]))*((float(liste[0][-1]))*10**(-6))/3600.*1000
+        
