@@ -17,7 +17,7 @@ class Interface():
         self.fenetre.geometry('800x600+{}+{}'.format(self.Htrigger,self.Vtrigger))
         self.fenetre.attributes("-alpha", 0.9)
         #definition de l'arriere plan
-        self.monfond = Image.open("background.jpeg")
+        self.monfond = Image.open("./pictures/background.jpeg")
         self.background = ImageTk.PhotoImage(self.monfond) 
         self.Fond=Label(self.fenetre,image=self.background).place(x=-2,y=-2) 
         #definition des titres
@@ -109,7 +109,7 @@ class Interface():
         #creation du de la barre de chargement
         self.Loading = Canvas(self.fenetre, width=200, height=100,bg='white',relief="ridge",borderwidth=5)
         self.Loading.place(height=50,width=600,x=100,y=520)
-        self.monimage = Image.open("progressbar.bmp")    ## Chargement d'une image à partir de PIL
+        self.monimage = Image.open("./pictures/progressbar.bmp")    ## Chargement d'une image à partir de PIL
         self.photo = ImageTk.PhotoImage(self.monimage)      
         def boost():
             value=float(self.pourcent)*5.88

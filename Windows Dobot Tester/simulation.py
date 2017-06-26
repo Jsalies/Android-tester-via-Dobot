@@ -107,7 +107,7 @@ class Simulation(Thread):
                 self.fenetre.setInstruction("desinstallation de l'apk")
                 uninstallApk(apk)
                 self.fenetre.setpourcent(100)
-                self.fenetre.setMesureEnergie("la consommation total du telephone est de {}milliWattsheure\n pour {} tests.\nSoit {}milliWattsheure par tests.".format(Consomme,self.repetition,float(Consomme)/float(self.repetition)))
+                self.fenetre.setMesureEnergie("la consommation total du telephone est de {}milliWattheure\n pour {} tests.\nSoit {}milliWattheure par tests.".format(Consomme,self.repetition,float(Consomme)/float(self.repetition)))
         
         #on deconnecte le robot        
         dType.DisconnectDobot(api)
@@ -154,3 +154,9 @@ def calculCsv(filename):
     # valeur en milliwatts
     return calculAire(liste[0][1:-1],liste[3][1:-1])/(float(liste[0][-1]))*((float(liste[0][-1]))*10**(-6))/3600.*1000
         
+def Screenshot():
+    """ on considère qu'un unique telephone est branché et correctement reconnu (bon drivers)"""
+    subprocess.check_output(".\platform-tools\\adb shell screencap sdcard/screen.png")
+    subprocess.check_output(".\platform-tools\\adb pull sdcard/screen.png tempo/")
+    
+Screenshot()
