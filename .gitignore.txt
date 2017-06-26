@@ -1,4 +1,0 @@
-*.pyc
-*.out
-*.DS_Store
-/.idea
