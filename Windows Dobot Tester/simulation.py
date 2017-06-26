@@ -158,5 +158,3 @@ def Screenshot():
     """ on considère qu'un unique telephone est branché et correctement reconnu (bon drivers)"""
     subprocess.check_output(".\platform-tools\\adb shell screencap sdcard/screen.png")
     subprocess.check_output(".\platform-tools\\adb pull sdcard/screen.png tempo/")
-    
-Screenshot()
