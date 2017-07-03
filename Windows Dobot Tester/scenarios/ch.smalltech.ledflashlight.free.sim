@@ -1,4 +1,4 @@
-ch.smalltech.ledflashlight.free
+ch.smalltech.ledflashlight.free.HomeFree
 wait(5000) 
 mov(533.5, 405.2902) 
 touch()

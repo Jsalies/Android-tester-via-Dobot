@@ -1,9 +1,0 @@
-com.jelly.flash
-wait(5000) 
-mov(334.75, 670.5) 
-touch()
-mov(409.0, 723.5) 
-touch()
-wait(5000) 
-mov(389.5, 703.5) 
-touch()

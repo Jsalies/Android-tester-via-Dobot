@@ -1,0 +1,7 @@
+com.calf.led.flash.light.activity.MainActivity
+wait(5000) 
+mov(379.25, 576.25) 
+touch()
+mov(384.0, 701.5082) 
+touch()
+wait(5000) 
