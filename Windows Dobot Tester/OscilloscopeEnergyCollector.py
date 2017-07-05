@@ -17,7 +17,7 @@ class OscilloscopeEnergyCollector:
     def __init__(self,frequence):
         self.func_data_ready = CALLBACK_DATA_READY(self.myfunction1)
         self.func_data_overflow = CALLBACK_DATA_OVERFLOW(self.myfunction2)
-        self.frequency = frequence  # Frequency to be set in the oscilloscope to measure
+        self.frequency = int(frequence)  # Frequency to be set in the oscilloscope to measure
         self.dataRead = []
         self.USING_UCURRENT_DEVICE = True
         self.TIME_INIT = 0
@@ -31,6 +31,7 @@ class OscilloscopeEnergyCollector:
         
     def start(self, ouputEnergyFileName):
         self.ouputEnergyFileName = ouputEnergyFileName
+        self.dataRead = []
         self.scp.start()
 
     def stop(self):
@@ -40,12 +41,10 @@ class OscilloscopeEnergyCollector:
         else:
             powerTraceGenerated = self.saveDataToFileCalculatingPowerUsingAmplifier(self.ouputEnergyFileName, self.dataRead, self.TIME_INIT, self.frequencyf,
                                                                                self.RESISTOR, self.GAIN)
-
         if powerTraceGenerated:
             print('Energy file written')
         else:
             print('Error writing energy file')
-
 
         self.scp.stop()
 
@@ -131,7 +130,7 @@ class OscilloscopeEnergyCollector:
     def saveDataToFileCalculatingPowerUsinguCurrent(self, filePath, data, time, freq):
         csv_file = open(filePath, 'w+')
         try:
-            csv_file.write("Time(usecs),CH1,CH2,Power,Energy" + "\n")
+            csv_file.write("Time(usecs),Power" + "\n")
 
             # Write csv file
             period = (1.0 / freq) * 1e6
@@ -140,19 +139,14 @@ class OscilloscopeEnergyCollector:
             print("Ecriture dans le fichier")
             for var in range(numberOfBlocks):
                 for element in range(len(data[0])):
-                    csv_file.write(str(time) + ',')
-                    time = time + period
                     v1 = (data)[block][element]
                     v2 = (data)[block + 1][element]
-                    current = v2
-                    power = v1 * current
-                    energy = power * (1.0 / freq)
-
-                    csv_file.write(str(v1) + ',')  # voltage in phone (from power supply)
-                    csv_file.write(str(v2) + ',')  # voltage = current in resistor (using ucurrent)
-                    csv_file.write(str(power) + ',')  # power on phone
-                    csv_file.write(str(energy)+"\n")  # energy on phone
+                    power = v1 * v2
+                    csv_file.write(str(time) + "," + str(v1 * v2) + "\n")  # power on phone
+                    time = time + period
+                    csv_file.flush()
                 block = block + 2
+            csv_file.close()
 
         except Exception as e:
             return False

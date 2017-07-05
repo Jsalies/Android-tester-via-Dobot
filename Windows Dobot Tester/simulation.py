@@ -43,6 +43,7 @@ class Simulation(Thread):
             return
             
         else:
+            self.fenetre.setpourcent(0)
             self.fenetre.setInstruction("Dobot Magician bien connecté. Démarrage du test.")
             #on initialise le robot
             Dfonct.Init(api)
@@ -71,7 +72,7 @@ class Simulation(Thread):
                 #ouvrir le scénarios
                 File=open("./scenarios/"+scenars,'r')
                 #récuperer nom de l'apk
-                apk=scenars.strip('.')
+                apk=scenars[0:-4]
                 #recuperer le package pour le focus
                 package=(File.readline()).strip('\n')               
                 #récuperer le language pour le robot
@@ -95,19 +96,22 @@ class Simulation(Thread):
                 self.fenetre.setInstruction("installation de l'apk")
                 installApk(chemin)
                 self.fenetre.setInstruction("test de l'application")
-                Consomme=0                
+                #Consomme=0
                 for i in range(1,int(self.repetition)+1):
+                    self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" :")
                     Mesure.start("./results/"+apk+str(i)+".csv")
                     startApk(apk,package)
                     robot.Robot(api,ecran,self.fenetre,Z_min,language,valeurligne,float(i-1)/float(self.repetition)*100.).action()
                     closeApk(apk)
+                    self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : ENREGISTREMENT")
                     Mesure.stop()
-                    Consomme+=calculCsv("./results/"+apk+str(i)+".csv")
+                    self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" : DONE")
+                    #Consomme+=calculCsv("./results/"+apk+str(i)+".csv")
                     self.fenetre.setpourcent(float(i)/float(self.repetition)*100.)
                 self.fenetre.setInstruction("desinstallation de l'apk")
                 uninstallApk(apk)
                 self.fenetre.setpourcent(100)
-                self.fenetre.setMesureEnergie("la consommation total du telephone est de {}milliWattheure\n pour {} tests.\nSoit {}milliWattheure par tests.".format(Consomme,self.repetition,float(Consomme)/float(self.repetition)))
+                #self.fenetre.setMesureEnergie("la consommation total du telephone est de {}milliWattheure\n pour {} tests.\nSoit {}milliWattheure par tests.".format(Consomme,self.repetition,float(Consomme)/float(self.repetition)))
         
         #on deconnecte le robot        
         dType.DisconnectDobot(api)
@@ -143,16 +147,13 @@ def calculAire(temps,valeurs):
 
 def calculCsv(filename):
     """ calcul la consommation du smartphone via un jeu de données"""
-    fichier = csv.reader(open(filename,"rb"))
-    liste=[[],[],[],[],[]]
+    fichier = csv.reader(open(filename,"r"))
+    list=[[],[]]
     for row in fichier:
-        liste[0].append(row[0])
-        liste[1].append(row[1])
-        liste[2].append(row[2])
-        liste[3].append(row[3])
-        liste[4].append(row[4])
+        list[0].append(row[0])
+        list[1].append(row[1])
     # valeur en milliwatts
-    return calculAire(liste[0][1:-1],liste[3][1:-1])/(float(liste[0][-1]))*((float(liste[0][-1]))*10**(-6))/3600.*1000
+    return calculAire(list[0][1:-1],list[1][1:-1])/(float(list[0][-1]))*((float(list[0][-1]))*10**(-6))/3600.*1000
         
 def Screenshot():
     """ on considère qu'un unique telephone est branché et correctement reconnu (bon drivers)"""
