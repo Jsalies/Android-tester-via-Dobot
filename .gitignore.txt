@@ -1,7 +1,7 @@
 *.pyc
 *.out
 *.DS_Store
-/idea
-/"Windows Dobot Tester"/__pycache__
+idea
+"Windows Dobot Tester"/__pycache__
 *.iml
-*.csv
+"Windows Dobot Tester"/results/*.csv
