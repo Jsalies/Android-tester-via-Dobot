@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Tkinter import *
+from tkinter import *
 from PIL import Image, ImageTk
 import os
 import simulation
@@ -14,7 +14,7 @@ class Interface():
         self.fenetre.resizable(width=False, height=False)    
         self.Htrigger=(self.fenetre.winfo_screenwidth()-815)/2
         self.Vtrigger=(self.fenetre.winfo_screenheight()-615)/2
-        self.fenetre.geometry('800x600+{}+{}'.format(self.Htrigger,self.Vtrigger))
+        self.fenetre.geometry('800x600+{}+{}'.format(int(self.Htrigger),int(self.Vtrigger)))
         self.fenetre.attributes("-alpha", 0.9)
         #definition de l'arriere plan
         self.monfond = Image.open("./pictures/background.jpeg")
