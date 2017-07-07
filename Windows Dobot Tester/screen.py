@@ -12,17 +12,14 @@ class screen:
         self.fenetre.setInstruction("placez le robot dans le coin haut-gauche de l'écran (puis ENTREZ) :\n")
         fenetre.desactive()
         while fenetre.entrer==0:{}
-        fenetre.desactive()
         self.topleft=dType.GetPose(api)[0:2]
         self.fenetre.setInstruction("placez le robot dans le coin haut-droit de l'écran (puis ENTREZ) :\n")
         fenetre.desactive()
         while fenetre.entrer==0:{}
-        fenetre.desactive()
         self.topright=dType.GetPose(api)[0:2]
         self.fenetre.setInstruction("placez le robot dans le coin bas-gauche de l'écran (puis ENTREZ) :\n")
         fenetre.desactive()
         while fenetre.entrer==0:{}
-        fenetre.desactive()
         self.bottomleft=dType.GetPose(api)[0:2]
         self.pixelheight=screen_height
         self.pixelwidth=screen_width

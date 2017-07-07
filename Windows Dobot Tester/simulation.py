@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import csv
+import os
 from threading import Thread
+
 import DobotDllType as dType
 import Dobotfunctions as Dfonct
-import screen
-import robot
-import subprocess
-import os
 import OscilloscopeEnergyCollector as OEC
-import csv
+import robot
+import screen
+import shellcommands as adb
+
 
 class Simulation(Thread):
 
@@ -33,7 +35,7 @@ class Simulation(Thread):
         #Connect Dobot
         state = dType.ConnectDobot(api, "", 115200)[0]
         
-        #if the robot has the well state
+        #si le robot est dans le bon etat
         if (state == dType.DobotConnect.DobotConnect_NotFound):
             self.fenetre.setInstruction("Veuillez brancher le Dobot Magician ou installez les\ndrivers correspondants.")
             return
@@ -46,6 +48,7 @@ class Simulation(Thread):
             self.fenetre.setpourcent(0)
             self.fenetre.setInstruction("Dobot Magician bien connecté. Démarrage du test.")
             #on initialise le robot
+            Dfonct.SpeedInit(api)
             Dfonct.Init(api)
             #on demande au robot la valeur minimum de Z
             Z_min=Dfonct.Calc_Z_Min(api,self.fenetre)
@@ -66,9 +69,11 @@ class Simulation(Thread):
                 dType.DisconnectDobot(api)
                 return
             else:
-                Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence)
+                Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence,self.fenetre)
             #on test le nombre de scénarios souhaités
             for scenars in Filelist:
+                #on remet à zéro pour chaque application
+                self.fenetre.setpourcent(0)
                 #ouvrir le scénarios
                 File=open("./scenarios/"+scenars,'r')
                 #récuperer nom de l'apk
@@ -94,49 +99,30 @@ class Simulation(Thread):
                     self.fenetre.setInstruction("l'apk spécifié en ligne 1 dans le fichier scénario \nn'est pas présent dans le fichier apk. \nVeuillez l'ajouter ou modifier son nom.")
                     return
                 self.fenetre.setInstruction("installation de l'apk")
-                installApk(chemin)
+                adb.installApk(chemin)
                 self.fenetre.setInstruction("test de l'application")
                 #Consomme=0
                 for i in range(1,int(self.repetition)+1):
-                    self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" :")
+                    self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" : En cours")
+                    temp1=adb.TempCPU()
+                    freq1=adb.FreqCPU()
+                    robot.Robot(api, ecran, self.fenetre, Z_min, "mov("+str(int(ecran.pixelwidth)/2)+","+str(int(ecran.pixelheight)/2)+")", 0,float(i - 1) / float(self.repetition) * 100.).action()
                     Mesure.start("./results/"+apk+str(i)+".csv")
-                    startApk(apk,package)
+                    adb.startApk(apk,package)
                     robot.Robot(api,ecran,self.fenetre,Z_min,language,valeurligne,float(i-1)/float(self.repetition)*100.).action()
-                    closeApk(apk)
-                    self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : ENREGISTREMENT")
-                    Mesure.stop()
-                    self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" : DONE")
-                    #Consomme+=calculCsv("./results/"+apk+str(i)+".csv")
+                    adb.closeApk(apk)
                     self.fenetre.setpourcent(float(i)/float(self.repetition)*100.)
+                    self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
+                    Mesure.stop(True,temp1,freq1,adb.TempCPU(),adb.FreqCPU())
+                    #Consomme+=calculCsv("./results/"+apk+str(i)+".csv")
                 self.fenetre.setInstruction("desinstallation de l'apk")
-                uninstallApk(apk)
+                adb.uninstallApk(apk)
                 self.fenetre.setpourcent(100)
                 #self.fenetre.setMesureEnergie("la consommation total du telephone est de {}milliWattheure\n pour {} tests.\nSoit {}milliWattheure par tests.".format(Consomme,self.repetition,float(Consomme)/float(self.repetition)))
-        
+        self.fenetre.setInstruction("Les mesures ont été enregistrées dans\nle fichier results.")
         #on deconnecte le robot        
         dType.DisconnectDobot(api)
-        
-def installApk(apkName):
-    return subprocess.check_output(".\platform-tools\\adb install " + "\"" + apkName + "\"" , shell=True, universal_newlines=True)
 
-def uninstallApk(apkName):
-    return subprocess.check_output(".\platform-tools\\adb uninstall " + apkName , shell=True,universal_newlines=True)
-
-def startApk(apkName,packageName):
-    """
-    apkname sans le apk
-    :param apkName: 
-    :return: 
-    """
-    subprocess.check_output(".\platform-tools\\adb shell am start -n " + apkName +"/"+ packageName)
-        
-def closeApk(apkName):
-    """
-    apkname sans le apk
-    :param apkName: 
-    :return: 
-    """
-    subprocess.check_output(".\platform-tools\\adb shell am force-stop " + apkName)
 
 def calculAire(temps,valeurs):
     """ on prendra en entrée deux listes de même longueur qui representes les deux colonnes des tableaux excels"""
@@ -154,8 +140,3 @@ def calculCsv(filename):
         list[1].append(row[1])
     # valeur en milliwatts
     return calculAire(list[0][1:-1],list[1][1:-1])/(float(list[0][-1]))*((float(list[0][-1]))*10**(-6))/3600.*1000
-        
-def Screenshot():
-    """ on considère qu'un unique telephone est branché et correctement reconnu (bon drivers)"""
-    subprocess.check_output(".\platform-tools\\adb shell screencap sdcard/screen.png")
-    subprocess.check_output(".\platform-tools\\adb pull sdcard/screen.png tempo/")

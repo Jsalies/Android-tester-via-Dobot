@@ -14,7 +14,7 @@ CALLBACK_DATA_OVERFLOW = CFUNCTYPE(None, c_void_p)
 
 class OscilloscopeEnergyCollector:
 
-    def __init__(self,frequence):
+    def __init__(self,frequence,fenetre):
         self.func_data_ready = CALLBACK_DATA_READY(self.myfunction1)
         self.func_data_overflow = CALLBACK_DATA_OVERFLOW(self.myfunction2)
         self.frequency = int(frequence)  # Frequency to be set in the oscilloscope to measure
@@ -24,9 +24,9 @@ class OscilloscopeEnergyCollector:
         self.ouputEnergyFileName = ""
         self.RESISTOR = 0.1  # it is used when we measure using the PCB with the amplifier It is the value of the resistor in Ohms.
         self.GAIN = 10.88  # it is used when we measure using the PCB with the amplifier. It is the GAIN set in the amplifier.
-        print("Connecting to oscilloscope ...")
+        fenetre.setInstruction("Connection à oscilloscope ...")
         self.scp = self.connectToOscilloscope(self.frequency, 1000, self.func_data_ready, self.func_data_overflow)
-        print("Measuring during 5 seconds to heat the oscilloscope ...")
+        fenetre.setInstruction("Préchauffage de l'oscilloscope ...")
         self.measuringToHeatOscilloscope(self.scp, 5)
         
     def start(self, ouputEnergyFileName):
@@ -34,18 +34,17 @@ class OscilloscopeEnergyCollector:
         self.dataRead = []
         self.scp.start()
 
-    def stop(self):
+    def stop(self,value,temp1,freq1,temps2,freq2):
 
-        if self.USING_UCURRENT_DEVICE:
-            powerTraceGenerated = self.saveDataToFileCalculatingPowerUsinguCurrent(self.ouputEnergyFileName, self.dataRead, self.TIME_INIT, self.frequency)
-        else:
+        if self.USING_UCURRENT_DEVICE and value==True:
+            powerTraceGenerated = self.saveDataToFileCalculatingPowerUsinguCurrent(self.ouputEnergyFileName, self.dataRead, self.TIME_INIT, self.frequency,temp1,freq1,temps2,freq2)
+        elif value==True:
             powerTraceGenerated = self.saveDataToFileCalculatingPowerUsingAmplifier(self.ouputEnergyFileName, self.dataRead, self.TIME_INIT, self.frequencyf,
                                                                                self.RESISTOR, self.GAIN)
         if powerTraceGenerated:
             print('Energy file written')
         else:
             print('Error writing energy file')
-
         self.scp.stop()
 
     def myfunction1(self, parameters):
@@ -127,9 +126,10 @@ class OscilloscopeEnergyCollector:
         # Stop power monitor
         scp.stop()
 
-    def saveDataToFileCalculatingPowerUsinguCurrent(self, filePath, data, time, freq):
+    def saveDataToFileCalculatingPowerUsinguCurrent(self, filePath, data, time, freq,temp1,freq1,temp2,freq2):
         csv_file = open(filePath, 'w+')
         try:
+            csv_file.write("Beginning Temperature : "  + temp1 + "°C,Beginning Frequency : "  + freq1 + "Hz,Ending Temperature : "  + temp2 + "°C" + ",Ending Frequency : " + freq2 + "Hz\n")
             csv_file.write("Time(usecs),Power" + "\n")
 
             # Write csv file
@@ -188,4 +188,3 @@ class OscilloscopeEnergyCollector:
             if csv_file is not None:
                 csv_file.close()
                 return True
-

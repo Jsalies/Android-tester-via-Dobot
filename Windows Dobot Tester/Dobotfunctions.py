@@ -6,19 +6,27 @@ Created on Fri Jun 09 11:43:53 2017
 """
 
 import DobotDllType as dType
+import time
 
 #--------------------------------------------MOVEMENTS----------------------------------------
+
+def SpeedInit(api):
+    """ we precise the arms triggers"""
+    dType.SetPTPJointParams(api, 200, 200, 200, 200, 200, 200, 200, 200, isQueued = 1)
+    dType.SetPTPCommonParams(api, 100, 100, isQueued = 1)
+    dType.SetHOMEParams(api, 200, 200, 200, 200, isQueued = 1)
+    # Start to Execute Command Queued
+    dType.SetQueuedCmdStartExec(api)
+    time.sleep(1)
+    # Stop to Execute Command Queued
+    dType.SetQueuedCmdStopExec(api)
 
 
 def Init(api):
     """ to keep a good accuracy, we calibrate our arm.
-    This function must be called before all arm use"""
+    This function must be called before all king of arm using"""
     #Clean Command Queued
     dType.SetQueuedCmdClear(api)
-    #Async Motion Params Setting
-    dType.SetHOMEParams(api, 200, 200, 200, 200, isQueued = 1)
-    dType.SetPTPJointParams(api, 200, 200, 200, 200, 200, 200, 200, 200, isQueued = 1)
-    dType.SetPTPCommonParams(api, 100, 100, isQueued = 1)
     #Async Home
     dType.SetHOMECmd(api, temp = 0, isQueued = 1)
     #Useless movement which permit to wait the init end.
