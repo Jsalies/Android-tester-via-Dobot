@@ -10,35 +10,45 @@ significae_value = 0.05
 
 sys.stdout = open(sys.argv[1], 'w')
 
-folder_path = sys.argv[2]
+folder_path1 = sys.argv[2]
+folder_path2 = sys.argv[3]
 
-files = [f for f in listdir(folder_path) if isfile(join(folder_path, f))]
+files1 = [f for f in listdir(folder_path1) if isfile(join(folder_path1, f))]
+files2 = [f for f in listdir(folder_path1) if isfile(join(folder_path1, f))]
 
 cpt_echec = 0
 echec_list = ""
 
-data_list = []
+data_list1 = []
+data_list2 = []
 
-for file in files:
+for file in files1:
     if file.endswith(".energy"):
-        data_list.append(pd.read_csv(folder_path + file, skiprows=1, header=None)[1])
+        data_list1.append(pd.read_csv(folder_path1 + file, skiprows=1, header=None)[1])
     else:
-        data_list.append(None)
+        data_list1.append(None)
 
-for i in range(len(files) - 1):
-    for j in range(i + 1, len(files)):
-        if files[i].endswith(".energy"):
-            data_size = min(len(data_list[i]), len(data_list[j]))
-            result = stats.wilcoxon(data_list[i][:data_size], data_list[j][:data_size])
-            status = "same"
-            if int(result.pvalue) > significae_value:
-                status = "not same"
-                cpt_echec += 1
+for file in files2:
+    if file.endswith(".energy"):
+        data_list2.append(pd.read_csv(folder_path2 + file, skiprows=1, header=None)[1])
+    else:
+        data_list2.append(None)
 
-            row = '| {}\t | {}\t | {}\t | {}\t | {}\t | {}\t\t | {}\t |' \
-                .format(files[i], np.mean(data_list[i][:data_size]), files[j], np.mean(data_list[j][:data_size]),
-                        result.statistic, result.pvalue, status)
-            print("-" * len(row) + "\n" + row + "\n" + "-" * len(row) )
+for i in range(len(files1)):
+    if files1[i].endswith(".energy"):
+        for j in range(len(files2)):
+            if files2[i].endswith(".energy"):
+                data_size = min(len(data_list1[i]), len(data_list2[j]))
+                result = stats.wilcoxon(data_list1[i][:data_size], data_list2[j][:data_size])
+                status = "same"
+                if int(result.pvalue) > significae_value:
+                    status = "not same"
+                    cpt_echec += 1
+
+                row = '| {}\t | {}\t | {}\t | {}\t | {}\t | {}\t\t | {}\t |' \
+                    .format(files1[i], np.mean(data_list1[i][:data_size]), files2[j], np.mean(data_list2[j][:data_size]),
+                            result.statistic, result.pvalue, status)
+                print("-" * len(row) + "\n" + row + "\n" + "-" * len(row) )
 
 
 
