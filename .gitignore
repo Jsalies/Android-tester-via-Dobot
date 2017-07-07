@@ -1,7 +1,12 @@
 *.pyc
+
 *.out
+
 *.DS_Store
+
 idea
-__pycache__/
+
+__pycache__
 .iml
-*.csv
+*
+.csv

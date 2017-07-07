@@ -1,9 +1,9 @@
+# -*- coding: utf-8 -*-
 import os
 from ctypes import CFUNCTYPE, c_void_p
 
 import time
 import libtiepie
-__author__ = 'Foromo Daniel Soromou'
 import sys
 
 
@@ -43,9 +43,9 @@ class OscilloscopeEnergyCollector:
             powerTraceGenerated = self.saveDataToFileCalculatingPowerUsingAmplifier(self.ouputEnergyFileName, self.dataRead, self.TIME_INIT, self.frequencyf,
                                                                                self.RESISTOR, self.GAIN)
         if powerTraceGenerated:
-            self.fenetre.setInstruction('Energy file written')
+            self.fenetre.setInstruction('Fichier de mesures écrit')
         else:
-            self.fenetre.setInstruction('Error writing energy file')
+            self.fenetre.setInstruction('Erreur pendant l\'ecriture du fichier')
         self.scp.stop()
 
     def myfunction1(self, parameters):
@@ -112,7 +112,7 @@ class OscilloscopeEnergyCollector:
                 self.fenetre.setInstruction('Exception: ' + e.message)
                 sys.exit(1)
         else:
-            self.fenetre.setInstruction('No oscilloscope available with stream measurement support!')
+            self.fenetre.setInstruction('Pas d\'oscilloscope disponible avec un système de flux de mesure!')
             sys.exit(1)
 
         return scp
@@ -130,7 +130,7 @@ class OscilloscopeEnergyCollector:
     def saveDataToFileCalculatingPowerUsinguCurrent(self, filePath, data, time, freq,temp1,freq1,temp2,freq2):
         csv_file = open(filePath, 'w+')
         try:
-            csv_file.write("Beginning Temperature : "  + temp1 + "°C,Beginning Frequency : "  + freq1 + "Hz,Ending Temperature : "  + temp2 + "°C" + ",Ending Frequency : " + freq2 + "Hz\n")
+            csv_file.write("Beginning Temperature : "  + temp1 + "C,Beginning Frequency : "  + freq1 + "Hz,Ending Temperature : "  + temp2 + "C" + ",Ending Frequency : " + freq2 + "Hz\n")
             csv_file.write("Time(usecs),Power" + "\n")
 
             # Write csv file

@@ -456,9 +456,9 @@ def load():
             return CDLL("./dlls/windows/x64/DobotDll.dll", RTLD_LOCAL)
     elif platform.system() == "Linux":
         if ctypes.sizeof(ctypes.c_voidp) == 4:
-            return cdll.loadLibrary("./dlls/linux/x32/libDobotDll.so")
+            return cdll.LoadLibrary("./dlls/linux/x32/libDobotDll.so.1.0.0")
         else:
-            return cdll.loadLibrary("./dlls/linux/x64/libDobotDll.so")
+            return cdll.LoadLibrary("./dlls/linux/x64/libDobotDll.so.1.0.0")
     else:
         if ctypes.sizeof(ctypes.c_voidp) == 4:
             return CDLL("./dlls/max/x32/libDobotDll.dylib", RTLD_GLOBAL)
