@@ -7,6 +7,4 @@
 idea
 
 __pycache__
-.iml
-*
-.csv
+*.csv
