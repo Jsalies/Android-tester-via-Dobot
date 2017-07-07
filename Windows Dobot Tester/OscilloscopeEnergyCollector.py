@@ -28,6 +28,7 @@ class OscilloscopeEnergyCollector:
         self.scp = self.connectToOscilloscope(self.frequency, 1000, self.func_data_ready, self.func_data_overflow)
         fenetre.setInstruction("Préchauffage de l'oscilloscope ...")
         self.measuringToHeatOscilloscope(self.scp, 5)
+        self.fenetre=fenetre
         
     def start(self, ouputEnergyFileName):
         self.ouputEnergyFileName = ouputEnergyFileName
@@ -42,15 +43,15 @@ class OscilloscopeEnergyCollector:
             powerTraceGenerated = self.saveDataToFileCalculatingPowerUsingAmplifier(self.ouputEnergyFileName, self.dataRead, self.TIME_INIT, self.frequencyf,
                                                                                self.RESISTOR, self.GAIN)
         if powerTraceGenerated:
-            print('Energy file written')
+            self.fenetre.setInstruction('Energy file written')
         else:
-            print('Error writing energy file')
+            self.fenetre.setInstruction('Error writing energy file')
         self.scp.stop()
 
     def myfunction1(self, parameters):
         global dataRead
         if self.scp.is_data_overflow:
-            print('Data overflow!')
+            self.fenetre.setInstruction('Data overflow!')
             sys.exit(-1)
         else:
             d = self.scp.get_data()
@@ -59,7 +60,7 @@ class OscilloscopeEnergyCollector:
 
     def myfunction2(self, parameters):
         if self.scp.is_data_overflow:
-            print('Data overflow!')
+            self.fenetre.setInstruction('Data overflow!')
             sys.exit(-1)
 
     # Try to open an oscilloscope with stream measurement support:
@@ -108,10 +109,10 @@ class OscilloscopeEnergyCollector:
                 # print_device_info(scp)
                 # exit(0)
             except Exception as e:
-                print('Exception: ' + e.message)
+                self.fenetre.setInstruction('Exception: ' + e.message)
                 sys.exit(1)
         else:
-            print('No oscilloscope available with stream measurement support!')
+            self.fenetre.setInstruction('No oscilloscope available with stream measurement support!')
             sys.exit(1)
 
         return scp
@@ -136,7 +137,7 @@ class OscilloscopeEnergyCollector:
             period = (1.0 / freq) * 1e6
             block = 0
             numberOfBlocks = int(len(data) / 2)
-            print("Ecriture dans le fichier")
+            self.fenetre.setInstruction("Ecriture dans le fichier")
             for var in range(numberOfBlocks):
                 for element in range(len(data[0])):
                     v1 = (data)[block][element]
@@ -150,7 +151,7 @@ class OscilloscopeEnergyCollector:
 
         except Exception as e:
             return False
-            print('Exception: ' + e.message)
+            self.fenetre.setInstruction('Exception: ' + e.message)
         finally:
             if csv_file is not None:
                 csv_file.close()
@@ -182,7 +183,7 @@ class OscilloscopeEnergyCollector:
                     # csv_file.write(str(energy))  # energy on phone
                 block = block + 2
         except Exception as e:
-            print('Exception: ' + e.message)
+            self.fenetre.setInstruction('Exception: ' + e.message)
             return False
         finally:
             if csv_file is not None:

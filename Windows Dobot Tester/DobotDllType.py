@@ -1,5 +1,5 @@
 from ctypes import *
-import time, platform
+import time, platform, ctypes
 
 
 def enum(**enums):
@@ -450,11 +450,20 @@ DobotCommunicate = enum(
 
 def load():
     if platform.system() == "Windows":
-        return CDLL("./DobotDll.dll",  RTLD_LOCAL) 
-    elif platform.system() == "Darwin" :
-        return CDLL("libDobotDll.dylib",  RTLD_GLOBAL)
+        if ctypes.sizeof(ctypes.c_voidp) == 4:
+            return CDLL("./dlls/windows/x32/DobotDll.dll", RTLD_LOCAL)
+        else:
+            return CDLL("./dlls/windows/x64/DobotDll.dll", RTLD_LOCAL)
+    elif platform.system() == "Linux":
+        if ctypes.sizeof(ctypes.c_voidp) == 4:
+            return cdll.loadLibrary("./dlls/linux/x32/libDobotDll.so")
+        else:
+            return cdll.loadLibrary("./dlls/linux/x64/libDobotDll.so")
     else:
-        return cdll.loadLibrary("libDobotDll.so")
+        if ctypes.sizeof(ctypes.c_voidp) == 4:
+            return CDLL("./dlls/max/x32/libDobotDll.dylib", RTLD_GLOBAL)
+        else:
+            return CDLL("./dlls/max/x64/libDobotDll.dylib", RTLD_GLOBAL)
     
 def dSleep(ms):
     """
