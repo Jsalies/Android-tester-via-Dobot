@@ -461,9 +461,9 @@ def load():
             return cdll.LoadLibrary("./dlls/linux/x64/libDobotDll.so.1.0.0")
     else:
         if ctypes.sizeof(ctypes.c_voidp) == 4:
-            return CDLL("./dlls/max/x32/libDobotDll.dylib", RTLD_GLOBAL)
+            return CDLL("./dlls/mac/x32/libDobotDll.1.0.0.dylib", RTLD_GLOBAL)
         else:
-            return CDLL("./dlls/max/x64/libDobotDll.dylib", RTLD_GLOBAL)
+            return CDLL("./dlls/mac/x64/libDobotDll.1.0.0.dylib", RTLD_GLOBAL)
     
 def dSleep(ms):
     """
