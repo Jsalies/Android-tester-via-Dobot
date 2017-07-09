@@ -371,7 +371,7 @@ def main(argv):
 				history_deque = collections.deque() # past n samples for rolling average
 				filePath=OUTPUT_FOLDER +  "/" + package  + '-' + str(iteration+1) + '.csv'
 				with open (filePath, 'a') as fd:
-					old_stdout = sys.stdout 
+					old_stdout = sys.stdout
 					sys.stdout = fd
 					try:
 						last_flush = time.time()
