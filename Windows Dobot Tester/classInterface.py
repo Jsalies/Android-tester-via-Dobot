@@ -105,7 +105,7 @@ class Interface():
         self.valeurfrequence = Spinbox(self.fenetre,textvariable=self.frequence, from_=5000, to=200000,bg="gray")
         self.valeurfrequence.place(width=80,height=20,y=402,x=665)
         # on force la valeur de la frequence pour le monsoon
-        self.tempo=0
+        self.tempo=10000
         def blocage():
             self.tempo=self.frequence.get()
             self.frequence.set(5000)
