@@ -11,6 +11,7 @@ import robot
 import screen
 import shellcommands as adb
 import MesureMonsoon
+import time
 
 
 class Simulation(Thread):
@@ -65,8 +66,8 @@ class Simulation(Thread):
             # pour informer l'utilisateur
             self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
             #on lance la mesure d'energie dans l'oscilloscope
-            if self.choixOscillo==2:
-                Mesure=MesureMonsoon.Mesure_Monsoon(4.5,1,self.fenetre)
+            if int(self.choixOscillo) == 2:
+                Mesure=MesureMonsoon()
             else:
                 Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence,self.fenetre)
             #on test le nombre de scénarios souhaités
@@ -105,22 +106,24 @@ class Simulation(Thread):
                     self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" : En cours")
                     temp1=adb.TempCPU()
                     freq1=adb.FreqCPU()
+                    adb.Luminosity(0)
                     robot.Robot(api, ecran, self.fenetre, Z_min, "mov("+str(int(ecran.pixelwidth)/2)+","+str(int(ecran.pixelheight)/2)+")", 0,float(i - 1) / float(self.repetition) * 100.).action()
                     if self.choixOscillo==2:
-                        Mesure.start("./results/"+apk+str(i)+".csv",temp1,freq1)
+                        Mesure.start("./results/"+apk+str(i)+".csv")
                     else:
                         Mesure.start("./results/"+apk+str(i)+".csv")
                     adb.startApk(apk,package)
+                    time.sleep(0.5)
                     robot.Robot(api,ecran,self.fenetre,Z_min,language,valeurligne,float(i-1)/float(self.repetition)*100.).action()
                     adb.closeApk(apk)
                     self.fenetre.setpourcent(float(i)/float(self.repetition)*100.)
                     self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
                     if self.choixOscillo == 2:
-                        Mesure.stop(adb.TempCPU(),adb.FreqCPU())
+                        Mesure.stop(temp1,freq1,adb.TempCPU(),adb.FreqCPU())
                     else:
                         Mesure.stop(True,temp1,freq1,adb.TempCPU(),adb.FreqCPU())
                     #Consomme+=calculCsv("./results/"+apk+str(i)+".csv")
-                self.fenetre.setInstruction("desinstallation de l'apk")
+                self.fenetre.setInstruction("désinstallation de l'apk")
                 adb.uninstallApk(apk)
                 self.fenetre.setpourcent(100)
                 #self.fenetre.setMesureEnergie("la consommation total du telephone est de {}milliWattheure\n pour {} tests.\nSoit {}milliWattheure par tests.".format(Consomme,self.repetition,float(Consomme)/float(self.repetition)))

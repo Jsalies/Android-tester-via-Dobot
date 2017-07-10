@@ -1,0 +1,9 @@
+com.socialnmobile.flashlight.Flashlight
+wait(5000) 
+mov(379.39648, 550.0) 
+touch()
+mov(361.5, 661.5) 
+touch()
+wait(5000) 
+mov(396.5, 529.25) 
+touch()

@@ -1,0 +1,9 @@
+com.humberto.flashlight.MainActivity
+wait(5000) 
+mov(367.0, 626.0) 
+touch()
+mov(324.25, 632.25) 
+touch()
+wait(5000) 
+mov(333.5, 648.0) 
+touch()

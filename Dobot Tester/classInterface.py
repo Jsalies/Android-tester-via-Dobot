@@ -83,7 +83,7 @@ class Interface():
         #definition de la liste des scénarios
         self.liste = Listbox(self.fenetre,bg="gray")
         a=0
-        for fichier in os.listdir('scenarios/'):
+        for fichier in sorted(os.listdir('scenarios/')):
             a+=1
             self.liste.insert(a, fichier)
         #placement de la ligne des scénarios
