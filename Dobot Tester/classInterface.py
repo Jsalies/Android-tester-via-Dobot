@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import platform
 import PIL.Image
 import PIL.ImageTk
 import os
 import simulation
 import shellcommands as adb
+import sys
 
 try:
 	from tkinter import *
@@ -25,15 +27,20 @@ class Interface():
         #definition de l'arriere plan
         self.monfond = PIL.Image.open("./pictures/background.jpeg")
         self.background = PIL.ImageTk.PhotoImage(self.monfond) 
-        self.Fond=Label(self.fenetre,image=self.background).place(x=-2,y=-2) 
+        self.Fond=Label(self.fenetre,image=self.background).place(x=-2,y=-2)
         #definition des titres
         self.txt1 = Label(self.fenetre, text ='caractéristiques de l\'écran du téléphone :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
         self.txt2 = Label(self.fenetre, text ='instructions :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
-        self.txt3 = Label(self.fenetre, text ='Largueur (en Pixels) :',fg="white",anchor='e',font=("bold"),bg="black")
-        self.txt4 = Label(self.fenetre, text ='Hauteur (en Pixels) :',fg="white",anchor='e',font=("bold"),bg="black")
-        self.txt5 = Label(self.fenetre, text ='nombre de test :',fg="white",anchor='e',font=("bold"),bg="black")
+        self.txt3 = Label(self.fenetre, text ='Largueur (en Pixels) :',fg="white",anchor='e',font=("Helvetica", 10, "bold"),bg="black")
+        self.txt4 = Label(self.fenetre, text ='Hauteur (en Pixels) :',fg="white",anchor='e',font=("Helvetica", 10, "bold"),bg="black")
+        self.txt5 = Label(self.fenetre, text ='nombre de test :',fg="white",anchor='e',font=("Helvetica", 10, "bold"),bg="black")
         self.txt6 = Label(self.fenetre, text ='choix du scénario :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
         self.txt7 = Label(self.fenetre, text ='mesure d\'energie :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
+        if sys.maxsize>2**32-1:
+            version="x64"
+        else:
+            version="x86"
+        self.txt8 = Label(self.fenetre, text = platform.system()+" Python v"+ str(sys.version_info[0])+"."+str(sys.version_info[1])+"."+str(sys.version_info[2])+" "+version,fg="white",font=("Helvetica", 7, "bold italic"),bg="black")
         #placement des titres
         self.txt1.place(height=20,width=400,x=0,y=10)
         self.txt2.place(height=20,width=400,x=400,y=10)
@@ -42,17 +49,28 @@ class Interface():
         self.txt5.place(height=20,width=150,x=20,y=150)
         self.txt6.place(height=20,width=124,x=138,y=190)
         self.txt7.place(height=20,width=120,x=540,y=190)
+        self.txt8.place(height=20, width=250, x=610, y=582)
+        #on récupere le systeme d'exploitation ainsi que la version de python
+        #on definit une variable
+        self.TexteInstructions = StringVar()
+        self.TexteInstructions.set("Veuillez suivre les instructions apparaissantes ici.")
+        #on defini notre zone de texte
+        self.instruction=Label(self.fenetre,textvariable=self.TexteInstructions,bg='gray',justify="left",relief='sunken',anchor='nw')
+        self.instruction.place(height=120,width=350,x=425,y=50)
         #definitions des entrées
         self.longvalue = IntVar()
         self.hautvalue = IntVar()
-        #On demande directement au telephone sa taille
-        try:
-            size=adb.SizeScreen()
-            self.longvalue.set(size[1])
-            self.hautvalue.set(size[0])
-        except:
-            self.longvalue.set(1000)
-            self.hautvalue.set(1000)
+        self.longvalue.set(1000)
+        self.hautvalue.set(1000)
+        def autoAjust():
+            # On demande directement au telephone sa taille
+            try:
+                size = adb.SizeScreen()
+                self.longvalue.set(size[1])
+                self.hautvalue.set(size[0])
+            except:
+                self.setInstruction("Veuillez renseigner la taille de l'écran du telephone")
+        autoAjust()
         #Parametrage des entrées
         self.Longueur = Spinbox(self.fenetre,textvariable=self.longvalue, from_=1, to=10000,bg="gray")
         self.Hauteur = Spinbox(self.fenetre,textvariable=self.hautvalue, from_=1, to=10000,bg="gray")
@@ -80,12 +98,6 @@ class Interface():
         self.tousScenarios= IntVar()
         self.toutfaire = Checkbutton(self.fenetre,variable=self.tousScenarios, text="Tout tester",bg="gray",activebackground="gray")        
         self.toutfaire.place(height=15,width=80,x=270,y=410)
-        #on definit une variable
-        self.TexteInstructions = StringVar()
-        self.TexteInstructions.set("Veuillez suivre les instructions apparaissantes ici.")
-        #on defini notre zone de texte
-        self.instruction=Label(self.fenetre,textvariable=self.TexteInstructions,bg='gray',justify="left",relief='sunken',anchor='nw')
-        self.instruction.place(height=120,width=350,x=425,y=50)        
         #on definit une variable
         self.TexteMesureEnergie = StringVar()
         self.TexteMesureEnergie.set("Ici apparaitrons les résultats du test")
