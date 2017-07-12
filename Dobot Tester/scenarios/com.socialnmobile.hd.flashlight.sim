@@ -1,4 +1,5 @@
 com.socialnmobile.hd.flashlight.Flashlight
+wait(1000)
 mov(383.0184, 549.4398) 
 touch()
 wait(5000) 

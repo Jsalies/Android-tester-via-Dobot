@@ -1,0 +1,67 @@
+from multiprocessing import Process
+
+
+
+class Enregistrement():
+
+    def __init__(self,ouputEnergyFileName,dataRead,temp1,freq1,temp2,freq2,type,TIME_INIT=None,frequency=None,RESISTOR=None,GAIN=None):
+        self.ouputEnergyFileName=ouputEnergyFileName
+        self.dataRead=dataRead
+        self.TIME_INIT=TIME_INIT
+        self.frequency=frequency
+        self.RESISTOR=RESISTOR
+        self.GAIN=GAIN
+        self.temp1=temp1
+        self.freq1=freq1
+        self.temp2=temp2
+        self.freq2=freq2
+        self.type=type
+        p=Process(target=self.run,args=())
+        p.start()
+
+
+    def run(self):
+        csv_file = open(self.ouputEnergyFileName, 'w+')
+        try:
+            csv_file.write(
+                "Beginning Temperature : " + self.temp1 + "C,Beginning Frequency : " + self.freq1 + "Hz,Ending Temperature : " + self.temp2 + "C" + ",Ending Frequency : " + self.freq2 + "Hz\n")
+            csv_file.write("Time(usecs),Power" + "\n")
+            # Write csv file
+            period = (1.0 / self.frequency) * 1e6
+            block = 0
+            numberOfBlocks = int(len(self.dataRead) / 2)
+            print("Ecriture dans le fichier")
+
+            if type==1:
+                    for var in range(numberOfBlocks):
+                        for element in range(len(self.dataRead[0])):
+                            v1 = (self.dataRead)[block][element]
+                            v2 = (self.dataRead)[block + 1][element]
+                            power = v1 * v2
+                            csv_file.write(str(self.TIME_INIT) + "," + str(v1 * v2) + "\n")  # power on phone
+                            self.TIME_INIT = self.TIME_INIT + period
+                            csv_file.flush()
+                        block = block + 2
+                    csv_file.close()
+            else:
+                for var in range(numberOfBlocks):
+                    for element in range(len(self.dataRead[0])):
+                        csv_file.write(str(self.TIME_INIT) + ',')
+                        self.TIME_INIT = self.TIME_INIT + period
+                        v1 = (self.dataRead)[block][element]
+                        v2 = (self.dataRead)[block + 1][element]
+                        voltageDifference = float(v2 / self.GAIN)
+                        current = voltageDifference / self.RESISTOR
+                        power = v1 * current
+                        csv_file.write(str(power) + "\n")  # power on phone
+                        csv_file.flush()
+                    block = block + 2
+                csv_file.close()
+
+        except Exception as e:
+            return False
+            print('Exception: ' + e.message)
+        finally:
+            if csv_file is not None:
+                csv_file.close()
+        return True

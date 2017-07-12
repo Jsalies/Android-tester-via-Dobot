@@ -5,6 +5,7 @@ from ctypes import CFUNCTYPE, c_void_p
 import time
 import libtiepie
 import sys
+import enregistrement
 
 
 # The callback function to run when data is ready
@@ -38,14 +39,9 @@ class OscilloscopeEnergyCollector:
     def stop(self,value,temp1,freq1,temp2,freq2):
 
         if self.USING_UCURRENT_DEVICE and value==True:
-            powerTraceGenerated = self.saveDataToFileCalculatingPowerUsinguCurrent(self.ouputEnergyFileName, self.dataRead, self.TIME_INIT, self.frequency,temp1,freq1,temp2,freq2,self.fenetre)
+            enregistrement.Enregistrement(self.ouputEnergyFileName, self.dataRead, temp1, freq1, temp2, freq2, 1, self.TIME_INIT,self.frequency)
         elif value==True:
-            powerTraceGenerated = self.saveDataToFileCalculatingPowerUsingAmplifier(self.ouputEnergyFileName, self.dataRead, self.TIME_INIT, self.frequency,
-                                                                               self.RESISTOR, self.GAIN,temp1,freq1,temp2,freq2,self.fenetre)
-        if powerTraceGenerated:
-            self.fenetre.setInstruction('Fichier de mesures écrit')
-        else:
-            self.fenetre.setInstruction('Erreur pendant l\'ecriture du fichier')
+            enregistrement.Enregistrement(self.ouputEnergyFileName, self.dataRead, temp1, freq1, temp2, freq2, 2,self.TIME_INIT, self.frequency,self.RESISTOR, self.GAIN)
         self.scp.stop()
 
     def myfunction1(self, parameters):
@@ -126,65 +122,3 @@ class OscilloscopeEnergyCollector:
 
         # Stop power monitor
         scp.stop()
-
-    def saveDataToFileCalculatingPowerUsinguCurrent(self, filePath, data, time, freq,temp1,freq1,temp2,freq2,fenetre):
-        csv_file = open(filePath, 'w+')
-        try:
-            csv_file.write("Beginning Temperature : "  + temp1 + "C,Beginning Frequency : "  + freq1 + "Hz,Ending Temperature : "  + temp2 + "C" + ",Ending Frequency : " + freq2 + "Hz\n")
-            csv_file.write("Time(usecs),Power" + "\n")
-
-            # Write csv file
-            period = (1.0 / freq) * 1e6
-            block = 0
-            numberOfBlocks = int(len(data) / 2)
-            fenetre.setInstruction("Ecriture dans le fichier")
-            for var in range(numberOfBlocks):
-                for element in range(len(data[0])):
-                    v1 = (data)[block][element]
-                    v2 = (data)[block + 1][element]
-                    power = v1 * v2
-                    csv_file.write(str(time) + "," + str(v1 * v2) + "\n")  # power on phone
-                    time = time + period
-                    csv_file.flush()
-                block = block + 2
-            csv_file.close()
-
-        except Exception as e:
-            return False
-            fenetre.setInstruction('Exception: ' + e.message)
-        finally:
-            if csv_file is not None:
-                csv_file.close()
-            return True
-
-    def saveDataToFileCalculatingPowerUsingAmplifier(self, filePath, data, time, freq, resistor, gain,temp1,freq1,temp2,freq2,fenetre):
-        csv_file = open(filePath, 'w+')
-        try:
-            csv_file.write("Beginning Temperature : "  + temp1 + "C,Beginning Frequency : "  + freq1 + "Hz,Ending Temperature : "  + temp2 + "C" + ",Ending Frequency : " + freq2 + "Hz\n")
-            csv_file.write("Time(usecs),Power" + "\n")
-
-            # Write csv file
-            period = (1.0 / freq) * 1e6
-            block = 0
-            numberOfBlocks = int(len(data) / 2)
-            fenetre.setInstruction("Ecriture dans le fichier")
-            for var in range(numberOfBlocks):
-                for element in range(len(data[0])):
-                    csv_file.write(str(time) + ',')
-                    time = time + period
-                    v1 = (data)[block][element]
-                    v2 = (data)[block + 1][element]
-                    voltageDifference = float(v2 / gain)
-                    current = voltageDifference / resistor
-                    power = v1 * current
-                    csv_file.write(str(power)+ "\n")  # power on phone
-                    csv_file.flush()
-                block = block + 2
-            csv_file.close()
-        except Exception as e:
-            fenetre.setInstruction('Exception: ' + e.message)
-            return False
-        finally:
-            if csv_file is not None:
-                csv_file.close()
-                return True

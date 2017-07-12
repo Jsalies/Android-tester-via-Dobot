@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import classInterface
 
-fenetre=classInterface.Interface()
-fenetre.start()
+if __name__=="__main__":
+    fenetre = classInterface.Interface()
+    fenetre.start()

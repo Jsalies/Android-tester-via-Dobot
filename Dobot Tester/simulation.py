@@ -16,8 +16,6 @@ import time
 
 class Simulation(Thread):
 
-    """Thread chargé simplement d'afficher une lettre dans la console."""
-
     def __init__(self,interface):
         Thread.__init__(self)        
         self.fenetre=interface
@@ -113,7 +111,7 @@ class Simulation(Thread):
                     else:
                         Mesure.start("./results/"+apk+str(i)+".csv")
                     adb.startApk(apk,package)
-                    time.sleep(0.5)
+                    time.sleep(1)
                     robot.Robot(api,ecran,self.fenetre,Z_min,language,valeurligne,float(i-1)/float(self.repetition)*100.).action()
                     adb.closeApk(apk)
                     self.fenetre.setpourcent(float(i)/float(self.repetition)*100.)
