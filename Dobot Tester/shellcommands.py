@@ -48,14 +48,14 @@ def installApk(apkName):
 	if platform.system() == "Windows":
 		return subprocess.check_output(".\platform-tools\\adb install " + "\"" + apkName + "\"", shell=True,universal_newlines=True)
 	else:
-		return os.popen("adb install " + "\"" + apkName + "\"", shell=True,universal_newlines=True)
+		return os.popen("adb install " + "\"" + apkName + "\"")
 
 def uninstallApk(apkName):
 	"""On désinstalle l'apk concernée"""
 	if platform.system() == "Windows":
 		return subprocess.check_output(".\platform-tools\\adb uninstall " + apkName, shell=True, universal_newlines=True)
 	else:
-		return os.popen("adb uninstall " + apkName, shell=True, universal_newlines=True)
+		return os.popen("adb uninstall " + apkName)
 
 def startApk(apkName, packageName):
 	"""
