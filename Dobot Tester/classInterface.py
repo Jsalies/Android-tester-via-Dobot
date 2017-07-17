@@ -8,18 +8,19 @@ import shellcommands as adb
 import sys
 
 try:
-	from tkinter import *
+    from tkinter import *
+    from tkinter import messagebox as msgbox
 except:
-	from Tkinter import *
+    from Tkinter import *
+    from Tkinter import messagebox as msgbox
 
 class Interface():
-    
     def __init__(self):
         #definition des variables globals
         self.pourcent=0
         #definition de la fenetre principale
         self.fenetre = Tk(className="Energy consumption tester - Dobot Magician")
-        self.fenetre.resizable(width=False, height=False)    
+        self.fenetre.resizable(width=False, height=False)
         self.Htrigger=(self.fenetre.winfo_screenwidth()-815)/2
         self.Vtrigger=(self.fenetre.winfo_screenheight()-615)/2
         self.fenetre.geometry('800x600+{}+{}'.format(int(self.Htrigger),int(self.Vtrigger)))
@@ -62,6 +63,7 @@ class Interface():
         self.hautvalue = IntVar()
         self.longvalue.set(1000)
         self.hautvalue.set(1000)
+        # notre fonction destiné à demander directement au telephone sa taille
         def autoAjust():
             # On demande directement au telephone sa taille
             try:
@@ -71,15 +73,28 @@ class Interface():
             except:
                 self.setInstruction("Veuillez renseigner la taille de l'écran du telephone")
         autoAjust()
+        #definition du bouton AJUSTER
+        self.ajust = Button(self.fenetre, text='L/H AUTO',bg='#797DF6',font=("ms serif", 10, "bold"), command=autoAjust)
+        #placement du bouton LANCER
+        self.ajust.place(height=20,width=100,x=270,y=50)
+        #notre fonction qui affiche un pop-up d'aide.
+        def helpMe():
+            msgbox.showinfo(title="Manipulation à suivre",icon='question',default='ok',message="0/ Branchez le telephone, le Dobot et le(s) oscilloscope(s)\n1/ Indiquer la taille du telephone (Ou utilisez H/L AUTO).\n2/ Choisissez l'oscilloscope que vous souhaitez."
+                                "\n3/ Choisissez la frequence d'echantillonage des mesures.\n4/ Choisissez un scénario à testé."
+                                                    "\n5/ Lancez.\n6/ Suivez les instructions affichées dans le panneau haut droit.")
+        #definition du bouton AIDE
+        self.aide = Button(self.fenetre, text='AIDE',bg='#797DF6',font=("ms serif", 10, "bold"), command=helpMe)
+        #placement du bouton AIDE
+        self.aide.place(height=20,width=100,x=270,y=100)
         #Parametrage des entrées
         self.Longueur = Spinbox(self.fenetre,textvariable=self.longvalue, from_=1, to=10000,bg="gray")
         self.Hauteur = Spinbox(self.fenetre,textvariable=self.hautvalue, from_=1, to=10000,bg="gray")
         self.Nbscenar = Spinbox(self.fenetre, from_=1, to=500,bg="gray")
         self.Longueur.config()
         #placement des entrées
-        self.Longueur.place(height=20,width=150,x=170,y=50)
-        self.Hauteur.place(height=20,width=150,x=170,y=100)
-        self.Nbscenar.place(height=20,width=150,x=170,y=150)
+        self.Longueur.place(height=20,width=75,x=170,y=50)
+        self.Hauteur.place(height=20,width=75,x=170,y=100)
+        self.Nbscenar.place(height=20,width=75,x=170,y=150)
         #definition de la liste des scénarios
         self.liste = Listbox(self.fenetre,bg="gray")
         a=0
@@ -160,7 +175,7 @@ class Interface():
                 thread1=simulation.Simulation(self)
                 thread1.start()
             except:
-                self.TexteInstructions.set("Veuillez selectionner une Valeur dans la liste\nOu cocher la case \"Tout tester\"")
+                self.TexteInstructions.set("Veuillez selectionner un scénario dans la liste\nOu cocher la case \"Tout tester\"")
 
         #definition du bouton LANCER
         self.bouton = Button(self.fenetre, text='LANCER',bg='#797DF6',font=("ms serif", 10, "bold"), command=Init)

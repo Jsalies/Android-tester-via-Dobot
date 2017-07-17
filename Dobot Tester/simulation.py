@@ -65,7 +65,7 @@ class Simulation(Thread):
             self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
             #on lance la mesure d'energie dans l'oscilloscope
             if int(self.choixOscillo) == 2:
-                Mesure=MesureMonsoon()
+                Mesure=MesureMonsoon.MesureMonsoon()
             else:
                 Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence,self.fenetre)
             #on test le nombre de scénarios souhaités

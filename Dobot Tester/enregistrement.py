@@ -1,3 +1,4 @@
+import platform
 from multiprocessing import Process
 
 
@@ -16,10 +17,11 @@ class Enregistrement():
         self.temp2=temp2
         self.freq2=freq2
         self.type=type
+        #on crée un subprocess pour pouvoir continuer de travailler (accelère considerablement la vitesse de travail)
         p=Process(target=self.run,args=())
         p.start()
 
-
+    #methode d'enregistrement pour l'oscilloscope HS5
     def run(self):
         csv_file = open(self.ouputEnergyFileName, 'w+')
         try:
@@ -31,7 +33,7 @@ class Enregistrement():
             block = 0
             numberOfBlocks = int(len(self.dataRead) / 2)
             print("Ecriture dans le fichier")
-
+            #Si nous calculons les valeurs via le courant
             if type==1:
                     for var in range(numberOfBlocks):
                         for element in range(len(self.dataRead[0])):
@@ -40,9 +42,11 @@ class Enregistrement():
                             power = v1 * v2
                             csv_file.write(str(self.TIME_INIT) + "," + str(v1 * v2) + "\n")  # power on phone
                             self.TIME_INIT = self.TIME_INIT + period
-                            csv_file.flush()
+                            if platform.system()=="Windows":
+                                csv_file.flush()
                         block = block + 2
                     csv_file.close()
+            #si nous calculons les valeurs via le gain/resistance
             else:
                 for var in range(numberOfBlocks):
                     for element in range(len(self.dataRead[0])):
@@ -54,7 +58,8 @@ class Enregistrement():
                         current = voltageDifference / self.RESISTOR
                         power = v1 * current
                         csv_file.write(str(power) + "\n")  # power on phone
-                        csv_file.flush()
+                        if platform.system() == "Windows":
+                            csv_file.flush()
                     block = block + 2
                 csv_file.close()
 

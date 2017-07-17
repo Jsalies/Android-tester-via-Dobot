@@ -3,6 +3,7 @@ import threading
 import Monsoon.LVPM as LVPM
 import Monsoon.sampleEngine as sampleEngine
 
+# on crée notre objet
 class MesureMonsoon:
     def __init__(self):
         self.Mon = LVPM.Monsoon()
@@ -11,12 +12,13 @@ class MesureMonsoon:
         self.engine = sampleEngine.SampleEngine(self.Mon)
         self.engine.disableCSVOutput()
         self.engine.ConsoleOutput(True)
-        print(self.Mon.getSerialNumber())
 
+    #on démarre l'aquisition de mesure (qui se fait sur un autre thread)
     def start(self,filepath):
         self.filepath=filepath
         self.engine.startSampling(sampleEngine.triggers.SAMPLECOUNT_INFINITE)
 
+    #on enregistre nos mesure (pas besoin de muli thread ou process, les quantité de données est assez petite)
     def stop(self,temp1,freq1,temp2,freq2):
         samples = self.engine.getSamples()
         # Samples are stored in order, indexed sampleEngine.channels values
@@ -27,26 +29,11 @@ class MesureMonsoon:
             f.write(str(samples[sampleEngine.channels.timeStamp][i])+","+str(samples[sampleEngine.channels.MainCurrent][i]*4.5/1000.))
         f.close()
 
-import usb
-busses = usb.busses()
-for bus in busses:
-  devices = bus.devices
-  for dev in devices:
-    print (repr(dev))
-    print ("Device:", dev.filename)
-    print ("  idVendor: %d (0x%04x)" % (dev.idVendor, dev.idVendor))
-    print ("  idProduct: %d (0x%04x)" % (dev.idProduct, dev.idProduct))
-    print ("Manufacturer:", dev.iManufacturer)
-    print ("Serial:", dev.iSerialNumber)
-    print ("Product:", dev.iProduct)
-
-
-
-import usb.core
-print (usb.core.find(find_all=True))
-print (usb.core.show_devices())
-import time
-mon=MesureMonsoon()
-mon.start("bob.csv")
-time.sleep(15)
-mon.stop(1,2,3,4)
+#import usb.core
+#print (usb.core.find(find_all=True))
+#print (usb.core.show_devices())
+#import time
+#mon=MesureMonsoon()
+#mon.start("bob.csv")
+#time.sleep(15)
+#mon.stop(1,2,3,4)

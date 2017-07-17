@@ -3,6 +3,7 @@ import subprocess
 import platform
 import os
 
+# toutes ces commandes sont destinées à demandé/donner une information au telephone connecté à l'ordinateur via le programme "ADB"
 def SizeScreen():
 	'''on recupere la taille de l'ecran en pixels'''
 	if platform.system() == "Windows":
