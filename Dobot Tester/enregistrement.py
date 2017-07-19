@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import platform
 from multiprocessing import Process
 
@@ -26,7 +27,7 @@ class Enregistrement():
         csv_file = open(self.ouputEnergyFileName, 'w+')
         try:
             csv_file.write(
-                "Beginning Temperature : " + self.temp1 + "C,Beginning Frequency : " + self.freq1 + "Hz,Ending Temperature : " + self.temp2 + "C" + ",Ending Frequency : " + self.freq2 + "Hz\n")
+                "Beginning Temperature : " + str(self.temp1) + "C,Beginning Frequency : " + str(self.freq1) + "Hz,Ending Temperature : " + str(self.temp2) + "C" + ",Ending Frequency : " + str(self.freq2) + "Hz\n")
             csv_file.write("Time(usecs),Power" + "\n")
             # Write csv file
             period = (1.0 / self.frequency) * 1e6
@@ -64,8 +65,8 @@ class Enregistrement():
                 csv_file.close()
 
         except Exception as e:
-            return False
             print('Exception: ' + e.message)
+            return False
         finally:
             if csv_file is not None:
                 csv_file.close()

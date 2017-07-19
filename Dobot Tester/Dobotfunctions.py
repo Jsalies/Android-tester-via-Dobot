@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 09 11:43:53 2017
-
-@author: Administrateur
-"""
-
 import DobotDllType as dType
 import time
 

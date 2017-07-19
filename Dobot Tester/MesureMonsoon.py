@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import threading
 import Monsoon.LVPM as LVPM
 import Monsoon.sampleEngine as sampleEngine
 
@@ -29,11 +28,12 @@ class MesureMonsoon:
             f.write(str(samples[sampleEngine.channels.timeStamp][i])+","+str(samples[sampleEngine.channels.MainCurrent][i]*4.5/1000.))
         f.close()
 
-#import usb.core
-#print (usb.core.find(find_all=True))
-#print (usb.core.show_devices())
-#import time
-#mon=MesureMonsoon()
-#mon.start("bob.csv")
-#time.sleep(15)
-#mon.stop(1,2,3,4)
+if __name__=="__main__":
+    import usb.core
+    print (usb.core.find(find_all=True))
+    print (usb.core.show_devices())
+    import time
+    mon=MesureMonsoon()
+    mon.start("bob.csv")
+    time.sleep(15)
+    mon.stop(1,2,3,4)

@@ -5,16 +5,21 @@ import PIL.ImageTk
 import os
 import simulation
 import shellcommands as adb
-import sys
+import Synthese
 
 try:
     from tkinter import *
     from tkinter import messagebox as msgbox
 except:
     from Tkinter import *
-    from Tkinter import messagebox as msgbox
+    import tkMessageBox as msgbox
 
 class Interface():
+
+    def boost(self):
+            value=float(self.pourcent)*5.88
+            self.bar.place(height=38,width=value,x=7,y=7)
+
     def __init__(self):
         #definition des variables globals
         self.pourcent=0
@@ -27,7 +32,7 @@ class Interface():
         self.fenetre.attributes("-alpha", 0.9)
         #definition de l'arriere plan
         self.monfond = PIL.Image.open("./pictures/background.jpeg")
-        self.background = PIL.ImageTk.PhotoImage(self.monfond) 
+        self.background = PIL.ImageTk.PhotoImage(self.monfond)
         self.Fond=Label(self.fenetre,image=self.background).place(x=-2,y=-2)
         #definition des titres
         self.txt1 = Label(self.fenetre, text ='caractéristiques de l\'écran du téléphone :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
@@ -76,16 +81,28 @@ class Interface():
         #definition du bouton AJUSTER
         self.ajust = Button(self.fenetre, text='L/H AUTO',bg='#797DF6',font=("ms serif", 10, "bold"), command=autoAjust)
         #placement du bouton LANCER
-        self.ajust.place(height=20,width=100,x=270,y=50)
+        self.ajust.place(height=20,width=100,x=270,y=100)
         #notre fonction qui affiche un pop-up d'aide.
         def helpMe():
-            msgbox.showinfo(title="Manipulation à suivre",icon='question',default='ok',message="0/ Branchez le telephone, le Dobot et le(s) oscilloscope(s)\n1/ Indiquer la taille du telephone (Ou utilisez H/L AUTO).\n2/ Choisissez l'oscilloscope que vous souhaitez."
+            msgbox.showinfo(title="Manipulation à suivre",icon='question',default='ok',message="AIDE : donne la méthode d'utilisation du programme.\nAUTO L/H: demande directement au telephone sa dimention\n"
+                                "SYNTHESE : synthétise l'ensemble des fichiers contenus dans \"./results\" et les enregistre dans un fichier \".csv\" dans le dossier \"./synthèse\"\n\nProcédure de test:\n"
+                                "0/ Branchez le telephone, le Dobot et le(s) oscilloscope(s)\n1/ Indiquez la taille du telephone (Ou utilisez H/L AUTO).\n2/ Choisissez l'oscilloscope que vous souhaitez."
                                 "\n3/ Choisissez la frequence d'echantillonage des mesures.\n4/ Choisissez un scénario à testé."
-                                                    "\n5/ Lancez.\n6/ Suivez les instructions affichées dans le panneau haut droit.")
+                                                    "\n5/ Lancez le test.\n6/ Suivez les instructions affichées dans le panneau haut droit.")
         #definition du bouton AIDE
         self.aide = Button(self.fenetre, text='AIDE',bg='#797DF6',font=("ms serif", 10, "bold"), command=helpMe)
         #placement du bouton AIDE
-        self.aide.place(height=20,width=100,x=270,y=100)
+        self.aide.place(height=20,width=100,x=270,y=50)
+        def synthese():
+            #try:
+            thread1=Synthese.synthese(self)
+            thread1.start()
+            #except:
+            #    self.TexteInstructions.set("Impossible de lancer la synthèse.\nPeut être que le dossier \"./results\" est vide...")
+        # definition du bouton UTILITAIRE
+        self.synthese = Button(self.fenetre, text='SYNTHESE', bg='#797DF6', font=("ms serif", 10, "bold"), command=synthese)
+        # placement du bouton AIDE
+        self.synthese.place(height=20, width=100, x=270, y=150)
         #Parametrage des entrées
         self.Longueur = Spinbox(self.fenetre,textvariable=self.longvalue, from_=1, to=10000,bg="gray")
         self.Hauteur = Spinbox(self.fenetre,textvariable=self.hautvalue, from_=1, to=10000,bg="gray")
@@ -163,13 +180,10 @@ class Interface():
         self.Loading = Canvas(self.fenetre, width=200, height=100,bg='white',relief="ridge",borderwidth=5)
         self.Loading.place(height=50,width=600,x=100,y=520)
         self.monimage = PIL.Image.open("./pictures/progressbar.bmp")    ## Chargement d'une image à partir de PIL
-        self.photo = PIL.ImageTk.PhotoImage(self.monimage)      
-        def boost():
-            value=float(self.pourcent)*5.88
-            self.bar = Canvas(self.Loading, width=600,height=100,bg='white',borderwidth=0)
-            self.bar.place(height=38,width=value,x=7,y=7)
-            self.bar.create_image(300,0,image=self.photo)      
-        boost()
+        self.photo = PIL.ImageTk.PhotoImage(self.monimage)
+        self.bar = Canvas(self.Loading, width=600, height=100, bg='white', borderwidth=0)
+        self.bar.create_image(300, 0, image=self.photo)
+        self.boost()
         def Init():
             try:
                 thread1=simulation.Simulation(self)
@@ -197,13 +211,10 @@ class Interface():
         
     def setMesureEnergie(self,texte):
         self.TexteMesureEnergie.set(texte)
-        
-    def boost(self):
-            value=float(self.pourcent)*5.88
-            self.bar = Canvas(self.Loading, width=600,height=100,bg='white',borderwidth=0)
-            self.bar.place(height=38,width=value,x=7,y=7)
-            self.bar.create_image(300,0,image=self.photo) 
-            
+
+    def getpourcent(self):
+        return self.pourcent
+
     def setpourcent(self,value):
         if (value>=0 and value<=100):
             self.pourcent=value

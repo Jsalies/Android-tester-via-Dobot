@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import csv
 import os
 from threading import Thread
 
@@ -19,6 +18,7 @@ class Simulation(Thread):
     def __init__(self,interface):
         Thread.__init__(self)        
         self.fenetre=interface
+        self.fenetre.setpourcent(0)
         self.largueur=interface.Longueur.get()
         self.longueur=interface.Hauteur.get()
         self.repetition=interface.Nbscenar.get()
@@ -45,7 +45,6 @@ class Simulation(Thread):
             return
             
         else:
-            self.fenetre.setpourcent(0)
             self.fenetre.setInstruction("Dobot Magician bien connecté. Démarrage du test.")
             #on initialise le robot
             Dfonct.SpeedInit(api)
@@ -61,6 +60,14 @@ class Simulation(Thread):
                      Filelist.append(fichier)
             else:
                 Filelist.append(self.scenar)
+            #on compte le nombre de ligne de tous les scénarios que l'on va utiliser(pour la barre de chargement)
+            pas = 0
+            for fichier in Filelist:
+                lecture = open('scenarios/' + fichier, 'r')
+                for ligne in lecture:
+                    pas += 1
+                pas-=2 # pour la premiere ligne qui represente le package et la derniere qui est toujours vide
+            pas=100./float(pas*self.repetition)
             # pour informer l'utilisateur
             self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
             #on lance la mesure d'energie dans l'oscilloscope
@@ -70,8 +77,6 @@ class Simulation(Thread):
                 Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence,self.fenetre)
             #on test le nombre de scénarios souhaités
             for scenars in Filelist:
-                #on remet à zéro pour chaque application
-                self.fenetre.setpourcent(0)
                 #ouvrir le scénarios
                 File=open("./scenarios/"+scenars,'r')
                 #récuperer nom de l'apk
@@ -81,68 +86,56 @@ class Simulation(Thread):
                 #récuperer le language pour le robot
                 lignecourante=File.readline()
                 language=""
-                valeurligne=0
                 while len(lignecourante)!=0:
                     language+=lignecourante
-                    valeurligne+=1
                     lignecourante=File.readline()
-                #on compte la valeur en pourcentage du parcours d'une ligne d'action pour le robot
-                valeurligne=1./(float(valeurligne+1)*float(self.repetition))*100.
                 #fermer le fichier
                 File.close
                 #on recupere le chemin absolu de l'apk
                 try:
                     chemin=os.path.abspath("./apk/"+apk+".apk")
                 except:
-                    self.fenetre.setInstruction("l'apk spécifié en ligne 1 dans le fichier scénario \nn'est pas présent dans le fichier apk. \nVeuillez l'ajouter ou modifier son nom.")
+                    self.fenetre.setInstruction("l'apk spécifié en ligne 1 dans le dossier scénario \nn'est pas présent dans le dossier apk. \nVeuillez l'ajouter ou modifier son nom.")
                     return
                 self.fenetre.setInstruction("installation de l'apk")
                 adb.installApk(chemin)
                 self.fenetre.setInstruction("test de l'application")
-                #Consomme=0
+                # On demarre le test de l'application
                 for i in range(1,int(self.repetition)+1):
+                    # on tient au courant l'utilisateur
                     self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" : En cours")
+                    # on recupere la temperature et frequence du processeur avant test
                     temp1=adb.TempCPU()
                     freq1=adb.FreqCPU()
+                    # on force la luminosité au minimum pour l'homogeneïté des tests
                     adb.Luminosity(0)
-                    robot.Robot(api, ecran, self.fenetre, Z_min, "mov("+str(int(ecran.pixelwidth)/2)+","+str(int(ecran.pixelheight)/2)+")", 0,float(i - 1) / float(self.repetition) * 100.).action()
+                    # on place le robot en position (pour toujours commencer au même endroit)
+                    robot.Robot(api, ecran, self.fenetre, Z_min, "mov("+str(int(ecran.pixelwidth)/2)+","+str(int(ecran.pixelheight)/2)+")", 0).action()
+                    # On démarre l'oscilloscope sélectionné
                     if self.choixOscillo==2:
-                        Mesure.start("./results/"+apk+str(i)+".csv")
+                        Mesure.start("./results/"+apk+"-"+str(i)+".csv")
                     else:
-                        Mesure.start("./results/"+apk+str(i)+".csv")
+                        Mesure.start("./results/"+apk+"-"+str(i)+".csv")
+                    #on démarre l'application
                     adb.startApk(apk,package)
+                    # temps de pause par sécurité
                     time.sleep(1)
-                    robot.Robot(api,ecran,self.fenetre,Z_min,language,valeurligne,float(i-1)/float(self.repetition)*100.).action()
+                    # On execute notre scénario complet
+                    robot.Robot(api,ecran,self.fenetre,Z_min,language,pas).action()
+                    # On ferme l'application
                     adb.closeApk(apk)
-                    self.fenetre.setpourcent(float(i)/float(self.repetition)*100.)
+                    # On tient au courant l'utilisateur
                     self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
+                    # On arete et sauvegarde la mesure d'energie
                     if self.choixOscillo == 2:
                         Mesure.stop(temp1,freq1,adb.TempCPU(),adb.FreqCPU())
                     else:
                         Mesure.stop(True,temp1,freq1,adb.TempCPU(),adb.FreqCPU())
-                    #Consomme+=calculCsv("./results/"+apk+str(i)+".csv")
+                # On tient au courant l'utilisateur
                 self.fenetre.setInstruction("désinstallation de l'apk")
+                # Une fois que tout est fait, on désinstalle l'application
                 adb.uninstallApk(apk)
-                self.fenetre.setpourcent(100)
-                #self.fenetre.setMesureEnergie("la consommation total du telephone est de {}milliWattheure\n pour {} tests.\nSoit {}milliWattheure par tests.".format(Consomme,self.repetition,float(Consomme)/float(self.repetition)))
+        # On tient au courant l'utilisateur
         self.fenetre.setInstruction("Les mesures ont été enregistrées dans\nle dossier results.")
         #on deconnecte le robot
         dType.DisconnectDobot(api)
-
-
-def calculAire(temps,valeurs):
-    """ on prendra en entrée deux listes de même longueur qui representes les deux colonnes des tableaux excels"""
-    aire=0
-    for i in range(1,len(temps)):
-        aire+=(float(temps[i])-float(temps[i-1]))/2.*(float(valeurs[i])+float(valeurs[i-1]))
-    return aire
-
-def calculCsv(filename):
-    """ calcul la consommation du smartphone via un jeu de données"""
-    fichier = csv.reader(open(filename,"r"))
-    list=[[],[]]
-    for row in fichier:
-        list[0].append(row[0])
-        list[1].append(row[1])
-    # valeur en milliwatts
-    return calculAire(list[0][1:-1],list[1][1:-1])/(float(list[0][-1]))*((float(list[0][-1]))*10**(-6))/3600.*1000
