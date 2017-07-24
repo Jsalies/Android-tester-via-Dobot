@@ -13,7 +13,15 @@ class synthese(Thread):
         self.data_entree = "./results/"
         self.frequency = float(fenetre.frequence.get())
         self.summary = []
-
+        self.data_sortie="WithRobot"
+        if fenetre.ChoixOscillo==1:
+            self.data_sortie += "_HomeSystem"
+        else:
+            self.data_sortie += "_MonsoonSystem"
+        if fenetre.PowerTran==0:
+            self.data_sortie+="_WithoutPowertran"
+        else:
+            self.data_sortie += "_WithPowertran"
     def run(self):
         # On compte le nombre de fichiers à traiter
         self.fenetre.setpourcent(0)
@@ -65,4 +73,4 @@ class synthese(Thread):
                                                  'sum_square', 'sum_square/frequency', 'percentile_25',
                                                  'percentile_50', 'percentile_75'])
 
-        summary.to_csv('./synthese/{}_summary.csv'.format("test_complet"), index=False, sep=',')
+        summary.to_csv('./synthese/{}_summary.csv'.format(self.data_sortie), index=False, sep=',')

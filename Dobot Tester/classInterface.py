@@ -84,10 +84,10 @@ class Interface():
         self.ajust.place(height=20,width=100,x=270,y=100)
         #notre fonction qui affiche un pop-up d'aide.
         def helpMe():
-            msgbox.showinfo(title="Manipulation à suivre",icon='question',default='ok',message="AIDE : donne la méthode d'utilisation du programme.\nAUTO L/H: demande directement au telephone sa dimention\n"
+            msgbox.showinfo(title="Manipulation à suivre",icon='question',default='ok',message="AIDE : donne la méthode d'utilisation du programme.\nAUTO L/H: demande directement au telephone sa dimention.\n"
                                 "SYNTHESE : synthétise l'ensemble des fichiers contenus dans \"./results\" et les enregistre dans un fichier \".csv\" dans le dossier \"./synthèse\"\n\nProcédure de test:\n"
                                 "0/ Branchez le telephone, le Dobot et le(s) oscilloscope(s)\n1/ Indiquez la taille du telephone (Ou utilisez H/L AUTO).\n2/ Choisissez l'oscilloscope que vous souhaitez."
-                                "\n3/ Choisissez la frequence d'echantillonage des mesures.\n4/ Choisissez un scénario à testé."
+                                "\n3/ Choisissez la frequence d'echantillonage des mesures.\n4/ Choisissez un scénario à tester."
                                                     "\n5/ Lancez le test.\n6/ Suivez les instructions affichées dans le panneau haut droit.")
         #definition du bouton AIDE
         self.aide = Button(self.fenetre, text='AIDE',bg='#797DF6',font=("ms serif", 10, "bold"), command=helpMe)
@@ -129,7 +129,11 @@ class Interface():
         #on defini une case à cocher
         self.tousScenarios= IntVar()
         self.toutfaire = Checkbutton(self.fenetre,variable=self.tousScenarios, text="Tout tester",bg="gray",activebackground="gray")        
-        self.toutfaire.place(height=15,width=80,x=270,y=410)
+        self.toutfaire.place(height=15,width=75,x=270,y=410)
+        # on defini une case à cocher
+        self.PowerTran = IntVar()
+        self.PowerTranMethode = Checkbutton(self.fenetre, variable=self.PowerTran, text="PowerTran Methode", bg="gray",activebackground="gray")
+        self.PowerTranMethode.place(height=15, width=127, x=135, y=410)
         #on definit une variable
         self.TexteMesureEnergie = StringVar()
         self.TexteMesureEnergie.set("Ici apparaitrons les résultats du test")

@@ -3,7 +3,7 @@
 import DobotDllType as dType
 import math
 
-class screen:
+class screen():
     """ Contains all the properties of our screen """
     
     def __init__(self,api,screen_width,screen_height,fenetre):

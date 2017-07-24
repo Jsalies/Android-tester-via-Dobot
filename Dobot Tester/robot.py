@@ -42,6 +42,7 @@ class Robot():
            'touch',
            'wait',
            'scroll',
+           'return',
         )
         # we define the characters which represente each token
         t_digit       = r'[0-9]+\.*[0-9]*'
@@ -52,7 +53,8 @@ class Robot():
         t_touch       = r'(?i)Touch'
         t_wait        = r'(?i)Wait'
         t_scroll      = r'(?i)Scroll'
-        t_ignore_space  = r'\s'
+        t_ignore_space= r'\s'
+        t_return      = r'(?i)return'
         # we define the special characters representing special tokens
         def t_newline(t):
             r'\n+'
@@ -74,6 +76,9 @@ class Robot():
                      | toucher
                      | scroller commande
                      | scroller
+                     | retourner commande
+                     | retourner
+
                      '''
         # when we meet "move(number,number)"
         def p_bouger(p):
@@ -104,6 +109,11 @@ class Robot():
             Dfonct.Scroll(self.robot,coord1[0],coord1[1],coord2[0],coord2[1],self.Zmin)
             self.fenetre.setpourcent(self.fenetre.getpourcent()+self.pas)
 
+        def p_retourner(p):
+            ''' retourner : return'''
+            coord=self.Ecran.Calc_Coordinates(0.10*float(self.Ecran.pixelwidth),0.98*float(self.Ecran.pixelheight))
+            Dfonct.Movement(self.robot, coord[0],coord[1], self.Zmin + 30)
+            Dfonct.Touch(self.robot, self.Zmin)
         # if we meet a grammar error in our input file
         def p_error(p):
             if p:

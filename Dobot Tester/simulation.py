@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import platform
 from threading import Thread
 
 import DobotDllType as dType
@@ -9,9 +10,10 @@ import OscilloscopeEnergyCollector as OEC
 import robot
 import screen
 import shellcommands as adb
-import MesureMonsoon
 import time
 
+if platform.system()!="Windows":
+    import MesureMonsoon as MM
 
 class Simulation(Thread):
 
@@ -25,6 +27,7 @@ class Simulation(Thread):
         self.choixOscillo=interface.ChoixOscillo.get()
         self.tousScenarios=interface.tousScenarios.get()
         self.valeurfrequence=interface.valeurfrequence.get()
+        self.powertran=interface.PowerTran.get()
         if self.tousScenarios==0:
             self.scenar=interface.liste.get(interface.liste.curselection())
         
@@ -66,13 +69,17 @@ class Simulation(Thread):
                 lecture = open('scenarios/' + fichier, 'r')
                 for ligne in lecture:
                     pas += 1
-                pas-=2 # pour la premiere ligne qui represente le package et la derniere qui est toujours vide
+                pas-=1 # pour la premiere ligne qui represente le package et la derniere qui est toujours vide
             pas=100./float(pas*self.repetition)
             # pour informer l'utilisateur
             self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
             #on lance la mesure d'energie dans l'oscilloscope
             if int(self.choixOscillo) == 2:
-                Mesure=MesureMonsoon.MesureMonsoon()
+                if platform.system() != "Windows":
+                    Mesure=MM.Monsoon()
+                else:
+                    self.fenetre.setInstruction("Le Monsoon n'est actuellement pas supporté par Windows")
+                    return
             else:
                 Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence,self.fenetre)
             #on test le nombre de scénarios souhaités
@@ -97,13 +104,20 @@ class Simulation(Thread):
                 except:
                     self.fenetre.setInstruction("l'apk spécifié en ligne 1 dans le dossier scénario \nn'est pas présent dans le dossier apk. \nVeuillez l'ajouter ou modifier son nom.")
                     return
-                self.fenetre.setInstruction("installation de l'apk")
+                if self.powertran==1:
+                    self.fenetre.setInstruction("installation de l'apk PowerTran...")
+                    adb.installApk("./ressources/powertran/powertran.apk")
+                self.fenetre.setInstruction("installation de l'apk...")
                 adb.installApk(chemin)
                 self.fenetre.setInstruction("test de l'application")
                 # On demarre le test de l'application
                 for i in range(1,int(self.repetition)+1):
                     # on tient au courant l'utilisateur
                     self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" : En cours")
+                    if self.powertran == 1:
+                        adb.startApk("powertran", "powertran.start")
+                        robot.Robot(api, ecran, self.fenetre, Z_min,"./ressources/powertran/powertran_scenario.sim",0 ).action()
+                        adb.closeApk("powertran")
                     # on recupere la temperature et frequence du processeur avant test
                     temp1=adb.TempCPU()
                     freq1=adb.FreqCPU()
@@ -113,7 +127,7 @@ class Simulation(Thread):
                     robot.Robot(api, ecran, self.fenetre, Z_min, "mov("+str(int(ecran.pixelwidth)/2)+","+str(int(ecran.pixelheight)/2)+")", 0).action()
                     # On démarre l'oscilloscope sélectionné
                     if self.choixOscillo==2:
-                        Mesure.start("./results/"+apk+"-"+str(i)+".csv")
+                        Mesure.StartMonsoon("./results/"+apk+"-"+str(i)+".csv")
                     else:
                         Mesure.start("./results/"+apk+"-"+str(i)+".csv")
                     #on démarre l'application
@@ -128,11 +142,15 @@ class Simulation(Thread):
                     self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
                     # On arete et sauvegarde la mesure d'energie
                     if self.choixOscillo == 2:
-                        Mesure.stop(temp1,freq1,adb.TempCPU(),adb.FreqCPU())
+                        Mesure.StopMonsoon()
                     else:
                         Mesure.stop(True,temp1,freq1,adb.TempCPU(),adb.FreqCPU())
+                #Si on utilise la methode powertran
+                if self.powertran == 1:
+                    self.fenetre.setInstruction("desinstallation de l'apk PowerTran...")
+                    adb.uninstallApk("powertran")
                 # On tient au courant l'utilisateur
-                self.fenetre.setInstruction("désinstallation de l'apk")
+                self.fenetre.setInstruction("désinstallation de l'apk...")
                 # Une fois que tout est fait, on désinstalle l'application
                 adb.uninstallApk(apk)
         # On tient au courant l'utilisateur
