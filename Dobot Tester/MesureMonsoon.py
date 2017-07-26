@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-#!/usr/bin/python2.6
+#!/usr/bin/python
 # Copyright (C) 2014 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,16 +20,21 @@ To install gflags, see http://code.google.com/p/python-gflags/
 To install pyserial, see http://pyserial.sourceforge.net/
 Example usages:
   Set the voltage of the device 7536 to 4.0V
-  python2.6 monsoon.py --voltage=4.0 --serialno 7536
+  python monsoon.py --voltage=4.0 --serialno 7536
   Get 5000hz data from device number 7536, with unlimited number of samples
-  python2.6 monsoon.py --samples -1 --hz 5000 --serialno 7536
+  python monsoon.py --samples -1 --hz 5000 --serialno 7536
   Get 200Hz data for 5 seconds (1000 events) from default device
-  python2.6 monsoon.py --samples 100 --hz 200
+  python monsoon.py --samples 100 --hz 200
   Get unlimited 200Hz data from device attached at /dev/ttyACM0
-  python2.6 monsoon.py --samples -1 --hz 200 --device /dev/ttyACM0
+  python monsoon.py --samples -1 --hz 200 --device /dev/ttyACM0
+Output columns for collection with --samples, separated by space:
+  TIMESTAMP OUTPUT OUTPUT_AVG USB USB_AVG
+   |                |          |   |
+   |                |          |   ` (if --includeusb and --avg)
+   |                |          ` (if --includeusb)
+   |                ` (if --avg)
+   ` (if --timestamp)
 """
-
-import threading
 import fcntl
 import os
 import select
@@ -41,6 +45,8 @@ import sys
 import time
 import collections
 import serial           # http://pyserial.sourceforge.net/
+import threading
+continuer=1
 
 class Monsoon:
   """
@@ -53,7 +59,7 @@ class Monsoon:
     mydata.extend(mon.CollectData())
   mon.StopDataCollection()
   """
-  def __init__(self, device=None, serialno=None, wait=1, acquisition=0):
+  def __init__(self, device=None, serialno=None, wait=1):
     """
     Establish a connection to a Monsoon.
     By default, opens the first available port, waiting if none are ready.
@@ -61,7 +67,6 @@ class Monsoon:
     can be specified with "serialno" (using the number printed on its back).
     With wait=0, IOError is thrown if a device is not immediately available.
     """
-    self.acquisition=0
     self._coarse_ref = self._fine_ref = self._coarse_zero = self._fine_zero = 0
     self._coarse_scale = self._fine_scale = 0
     self._last_seq = 0
@@ -103,7 +108,6 @@ class Monsoon:
       if not wait: raise IOError("No device found")
       print >>sys.stderr, "waiting for device..."
       time.sleep(1)
-
   def GetStatus(self):
     """ Requests and waits for status.  Returns status dictionary. """
     # status packet format
@@ -148,7 +152,6 @@ class Monsoon:
         elif k.endswith("CurrentLimit"):
           status[k] = 8 * (1023 - status[k]) / 1023.0
       return status
-
   def RampVoltage(self, start, end):
     v = start
     if v < 3.0: v = 3.0       # protocol doesn't support lower than this
@@ -157,34 +160,28 @@ class Monsoon:
       v += .1
       time.sleep(.1)
     self.SetVoltage(end)
-
   def SetVoltage(self, v):
     """ Set the output voltage, 0 to disable. """
     if v == 0:
       self._SendStruct("BBB", 0x01, 0x01, 0x00)
     else:
       self._SendStruct("BBB", 0x01, 0x01, int((v - 2.0) * 100))
-
   def SetMaxCurrent(self, i):
     """Set the max output current."""
     assert i >= 0 and i <= 8
     val = 1023 - int((i/8)*1023)
     self._SendStruct("BBB", 0x01, 0x0a, val & 0xff)
     self._SendStruct("BBB", 0x01, 0x0b, val >> 8)
-
   def SetUsbPassthrough(self, val):
     """ Set the USB passthrough mode: 0 = off, 1 = on,  2 = auto. """
     self._SendStruct("BBB", 0x01, 0x10, val)
-
   def StartDataCollection(self):
     """ Tell the device to start collecting and sending measurement data. """
     self._SendStruct("BBB", 0x01, 0x1b, 0x01) # Mystery command
     self._SendStruct("BBBBBBB", 0x02, 0xff, 0xff, 0xff, 0xff, 0x03, 0xe8)
-
   def StopDataCollection(self):
     """ Tell the device to stop collecting measurement data. """
     self._SendStruct("BB", 0x03, 0x00) # stop
-
   def CollectData(self):
     """ Return some current samples.  Call StartDataCollection() first. """
     while True:  # loop until we get data or a timeout
@@ -232,7 +229,6 @@ class Monsoon:
         self._coarse_scale = 2.88 / (self._coarse_ref - self._coarse_zero)
       if self._fine_ref != self._fine_zero:
         self._fine_scale = 0.0332 / (self._fine_ref - self._fine_zero)
-
   def _SendStruct(self, fmt, *args):
     """ Pack a struct (without length or checksum) and send it. """
     data = struct.pack(fmt, *args)
@@ -240,7 +236,6 @@ class Monsoon:
     checksum = (data_len + sum(struct.unpack("B" * len(data), data))) % 256
     out = struct.pack("B", data_len) + data + struct.pack("B", checksum)
     self.ser.write(out)
-
   def _ReadPacket(self):
     """ Read a single data record as a string (without length or checksum). """
     len_char = self.ser.read(1)
@@ -258,7 +253,6 @@ class Monsoon:
       print >>sys.stderr, "invalid checksum from serial port"
       return None
     return result[:-1]
-
   def _FlushInput(self):
     """ Flush all read data until no more available. """
     self.ser.flush()
@@ -277,41 +271,81 @@ class Monsoon:
     if flushed > 0:
       print >>sys.stderr, "dropped >%d bytes" % flushed
 
-    def ReglerMonsoon(self,V,A,USB=1):
-        # on fix la valeur du voltage
-        self.SetVoltage(V)
-        # on fix la valeur maximum du courant
-        self.SetMaxCurrent(A)
-        # on choisi d'avoir acces au port usb du monsoon via l'ordinateur
-        self.SetUsbPassthrough(USB)
-        # on afiche les parametres du monsoon
-        items = sorted(self.GetStatus().items())
-        print("\n".join(["%s: %s" % item for item in items]))
+  def start(self,file):
+    print ("start")
+    global continuer
+    """ Simple command-line interface for Monsoon."""
+    num_channels = 2
+    #num_channels = 1
+    self.SetVoltage(4.5)
+    self.SetMaxCurrent(3.)
+    items = sorted(self.GetStatus().items())
+    self.SetUsbPassthrough(1)
 
-    def StartMonsoon(self,fichier):
-        #pour la boucle infinie que l'on va déclencher
-        self.acquisition=1
-        # on lance la collecte de données MAIS PAS LA RECUPERATION /!\
-        self.StartDataCollection()
-        # on ouvre le fichier de collecte
-        with open(fichier, 'a') as fd:
-            BeginningTime = time.time()
-            # on recupere un échantillons tant que l'on veut
-            while (self.acquisition== 1):
-                samples = mon.CollectData()
-                fd.write(str(time.time() - BeginningTime)+","+ str(samples))
-            # une fois que c'est fini, on arrete la collecte
-        self.StopDataCollection()
+    # Make sure state is normal
+    self.StopDataCollection()
+    status = self.GetStatus()
+    native_hz = status["sampleRate"] * 1000
+    # Collect and average samples as specified
+    self.StartDataCollection()
+    self.CollectData()
+    # In case FLAGS.hz doesn't divide native_hz exactly, use this invariant:
+    # 'offset' = (consumed samples) * FLAGS.hz - (emitted samples) * native_hz
+    # This is the error accumulator in a variation of Bresenham's algorithm.
+    emitted = offset = 0
+    chan_buffers = tuple([] for _ in range(num_channels))
+    # past n samples for rolling average
+    history_deques = tuple(collections.deque() for _ in range(num_channels))
+    try:
+        fichier=open(file,"w")
+        fichier.write("!!!ligne inutile!!!\n")
+        fichier.write("Time,Power,Main,USB\n")
+        last_flush = time.time()
+        deb=time.time()
+        continuer=1
+        while continuer==1:
+          # The number of raw samples to consume before emitting the next output
+          need = (native_hz - offset + 5000 - 1) / 5000
+          if need > len(chan_buffers[0]):     # still need more input samples
+            chans_samples = self.CollectData()
+            if not all(chans_samples): break
+            for chan_buffer, chan_samples in zip(chan_buffers, chans_samples):
+              chan_buffer.extend(chan_samples)
+          else:
+            # Have enough data, generate output samples.
+            # Adjust for consuming 'need' input samples.
+            offset += need * 5000
+            while offset >= native_hz:  # maybe multiple, if FLAGS.hz > native_hz
+              this_sample = [sum(chan[:need]) / need for chan in chan_buffers]
+              fichier.write(str(round(10**6*(time.time()-deb),1))+",")
+              data_to_print = this_sample
+              fmt = ' '.join('%f' for _ in data_to_print)
+              fichier.write(str((data_to_print[0]+data_to_print[1])*4.5)+","+str(data_to_print[0]*4.5)+","+str(data_to_print[1]*4.5)+"\n")
+              sys.stdout.flush()
+              offset -= native_hz
+              emitted += 1              # adjust for emitting 1 output sample
+            chan_buffers = tuple(c[need:] for c in chan_buffers)
+            now = time.time()
+            if now - last_flush >= 0.99:  # flush every second
+              sys.stdout.flush()
+              last_flush = now
+    except KeyboardInterrupt:
+        print >>sys.stderr, "interrupted"
+    self.StopDataCollection()
+    fichier.close()
 
-    def StopMonsoon(self):
-        # pour stopper boucle infinie que l'on a déclenchée
-        self.acquisition = 1
+  def stop(self,value,temp1,freq1,temp2,freq2):
+      global continuer
+      print ("stop")
+      continuer=0
 
-if __name__=="__main__":
-    # on crée notre oscilloscope
-    mon = Monsoon()
-    mon.ReglerMonsoon(4.5,1.)
-    Thread_mesure = threading.Thread(target=mon.StartMonsoon("bob.csv"))
-    Thread_mesure.start()
-    time.sleep(10)
-    mon.acquisition = 0
+if __name__ == '__main__':
+  # Define flags here to avoid conflicts with people who use us as a library
+  mon=Monsoon()
+  print("debut")
+  lancermesure=threading.Thread(target=mon.start(),args=["bob.csv"])
+  lancermesure.start()
+  print("here")
+  time.sleep(25)
+  print("stop")
+  mon.stop()

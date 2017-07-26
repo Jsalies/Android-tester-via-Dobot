@@ -166,7 +166,7 @@ class Interface():
         self.txt8 = Label(self.fenetre, text='choix de l\'oscilloscope :', fg="black",
                           font=("Helvetica", 10, "bold italic"), bg="gray")
         self.txt8.place(height=20, width=200, x=437, y=370)
-        self.ChoixOscillo = StringVar()
+        self.ChoixOscillo = IntVar()
         self.oscillo1 = Radiobutton(self.fenetre, text="HS5", variable=self.ChoixOscillo, value=1, bg="gray",
                                     activebackground="gray", command=deblocage)
         self.oscillo2 = Radiobutton(self.fenetre, text="Monsoon", variable=self.ChoixOscillo, value=2, bg="gray",

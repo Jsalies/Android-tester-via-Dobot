@@ -111,7 +111,7 @@ class Robot():
 
         def p_retourner(p):
             ''' retourner : return'''
-            coord=self.Ecran.Calc_Coordinates(0.10*float(self.Ecran.pixelwidth),0.98*float(self.Ecran.pixelheight))
+            coord=self.Ecran.Calc_Coordinates(0.18*float(self.Ecran.pixelwidth),0.98*float(self.Ecran.pixelheight))
             Dfonct.Movement(self.robot, coord[0],coord[1], self.Zmin + 30)
             Dfonct.Touch(self.robot, self.Zmin)
         # if we meet a grammar error in our input file

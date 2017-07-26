@@ -1,7 +1,0 @@
-com.android.txplayer.gui.MainActivity
-wait(1500)
-mov(220.0, 334.15677) 
-touch()
-wait(30000) 
-return
-touch()

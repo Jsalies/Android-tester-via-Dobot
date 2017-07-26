@@ -1,15 +1,14 @@
 com.music.player.mp3player.white.activity_main
 mov(206.50224, 384.0) 
 touch()
-mov(239.5, 340.0) 
+mov(239.5, 320.0) 
 touch()
 mov(433.25, 1157.25) 
 touch()
 wait(20000) 
 mov(386.71112, 1026.5) 
 touch()
-mov(80,1260) 
-touch()
+return 
 mov(394.5, 382.25) 
 touch()
 mov(425.962, 1159.5) 

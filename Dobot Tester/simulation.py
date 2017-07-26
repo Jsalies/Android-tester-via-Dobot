@@ -59,7 +59,7 @@ class Simulation(Thread):
             #on regarde si nous faisons le test sur un ou plusieurs scénarios
             Filelist=[]
             if self.tousScenarios==1:
-                 for fichier in os.listdir('scenarios/'):
+                 for fichier in sorted(os.listdir('scenarios/')):
                      Filelist.append(fichier)
             else:
                 Filelist.append(self.scenar)
@@ -126,10 +126,7 @@ class Simulation(Thread):
                     # on place le robot en position (pour toujours commencer au même endroit)
                     robot.Robot(api, ecran, self.fenetre, Z_min, "mov("+str(int(ecran.pixelwidth)/2)+","+str(int(ecran.pixelheight)/2)+")", 0).action()
                     # On démarre l'oscilloscope sélectionné
-                    if self.choixOscillo==2:
-                        Mesure.StartMonsoon("./results/"+apk+"-"+str(i)+".csv")
-                    else:
-                        Mesure.start("./results/"+apk+"-"+str(i)+".csv")
+                    Mesure.start("./results/"+apk+"-"+str(i)+".csv")
                     #on démarre l'application
                     adb.startApk(apk,package)
                     # temps de pause par sécurité
@@ -141,13 +138,10 @@ class Simulation(Thread):
                     # On tient au courant l'utilisateur
                     self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
                     # On arete et sauvegarde la mesure d'energie
-                    if self.choixOscillo == 2:
-                        Mesure.StopMonsoon()
-                    else:
-                        Mesure.stop(True,temp1,freq1,adb.TempCPU(),adb.FreqCPU())
+                    Mesure.stop(True,temp1,freq1,adb.TempCPU(),adb.FreqCPU())
                 #Si on utilise la methode powertran
                 if self.powertran == 1:
-                    self.fenetre.setInstruction("desinstallation de l'apk PowerTran...")
+                    self.fenetre.setInstruction("désinstallation de l'apk PowerTran...")
                     adb.uninstallApk("powertran")
                 # On tient au courant l'utilisateur
                 self.fenetre.setInstruction("désinstallation de l'apk...")

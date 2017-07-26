@@ -14,14 +14,15 @@ class synthese(Thread):
         self.frequency = float(fenetre.frequence.get())
         self.summary = []
         self.data_sortie="WithRobot"
-        if fenetre.ChoixOscillo==1:
+        if fenetre.ChoixOscillo.get()==1:
             self.data_sortie += "_HomeSystem"
         else:
             self.data_sortie += "_MonsoonSystem"
-        if fenetre.PowerTran==0:
+        if fenetre.PowerTran.get()==0:
             self.data_sortie+="_WithoutPowertran"
         else:
             self.data_sortie += "_WithPowertran"
+        print (self.data_sortie)
     def run(self):
         # On compte le nombre de fichiers à traiter
         self.fenetre.setpourcent(0)
