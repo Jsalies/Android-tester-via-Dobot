@@ -112,6 +112,9 @@ class Simulation(Thread):
                 self.fenetre.setInstruction("test de l'application")
                 # On demarre le test de l'application
                 for i in range(1,int(self.repetition)+1):
+		    # On regarde si le fichier existe deja
+		    if os.path.exists("./results/"+apk+"-"+str(i)+".csv"):
+			continue
                     # on tient au courant l'utilisateur
                     self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" : En cours")
                     if self.powertran == 1:
@@ -119,8 +122,8 @@ class Simulation(Thread):
                         robot.Robot(api, ecran, self.fenetre, Z_min,"./ressources/powertran/powertran_scenario.sim",0 ).action()
                         adb.closeApk("powertran")
                     # on recupere la temperature et frequence du processeur avant test
-                    temp1=adb.TempCPU()
-                    freq1=adb.FreqCPU()
+                    temp1=1
+                    freq1=1
                     # on force la luminosité au minimum pour l'homogeneïté des tests
                     adb.Luminosity(0)
                     # on place le robot en position (pour toujours commencer au même endroit)
@@ -138,7 +141,7 @@ class Simulation(Thread):
                     # On tient au courant l'utilisateur
                     self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
                     # On arete et sauvegarde la mesure d'energie
-                    Mesure.stop(True,temp1,freq1,adb.TempCPU(),adb.FreqCPU())
+                    Mesure.stop(True,temp1,freq1,1,1)
                 #Si on utilise la methode powertran
                 if self.powertran == 1:
                     self.fenetre.setInstruction("désinstallation de l'apk PowerTran...")

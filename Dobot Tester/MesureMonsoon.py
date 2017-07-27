@@ -272,6 +272,10 @@ class Monsoon:
       print >>sys.stderr, "dropped >%d bytes" % flushed
 
   def start(self,file):
+    lancermesure=threading.Thread(target=self.getsamples,args=[file])
+    lancermesure.start()
+
+  def getsamples(self,file):
     print ("start")
     global continuer
     """ Simple command-line interface for Monsoon."""
@@ -343,9 +347,9 @@ if __name__ == '__main__':
   # Define flags here to avoid conflicts with people who use us as a library
   mon=Monsoon()
   print("debut")
-  lancermesure=threading.Thread(target=mon.start(),args=["bob.csv"])
+  lancermesure=threading.Thread(target=mon.start,args=["bob.csv"])
   lancermesure.start()
   print("here")
   time.sleep(25)
   print("stop")
-  mon.stop()
+  mon.stop(True,0,0,0,0)

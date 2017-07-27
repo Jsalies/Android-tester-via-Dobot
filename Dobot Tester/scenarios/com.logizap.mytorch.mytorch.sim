@@ -1,0 +1,9 @@
+com.logizap.mytorch.mytorch.MainActivity
+wait(5000) 
+mov(389.5797, 630.36957) 
+touch()
+mov(359.25, 608.0) 
+touch()
+wait(5000) 
+mov(389.5, 601.25) 
+touch()

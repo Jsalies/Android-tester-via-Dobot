@@ -1,0 +1,8 @@
+com.ijoysoft.hdplayer.ui.MainActivity
+mov(149.75, 343.25) 
+touch()
+wait(20000) 
+mov(380.0, 652.5) 
+touch()
+return
+touch()
