@@ -32,7 +32,10 @@ class Simulation(Thread):
             self.scenar=interface.liste.get(interface.liste.curselection())
         
     def run(self):
-        """Code à exécuter pendant l'exécution du thread."""  
+        """Code à exécuter pendant l'exécution du thread."""
+        #On se connecte au telephone
+        self.fenetre.setInstruction("Connection au telephone.")
+        adb.Connect(self.fenetre.IPvalue.get())
         #Creation de la pile d'actions du robot        
         api = dType.load()
         #Connect Dobot
@@ -97,7 +100,7 @@ class Simulation(Thread):
                     language+=lignecourante
                     lignecourante=File.readline()
                 #fermer le fichier
-                File.close
+                File.close()
                 #on recupere le chemin absolu de l'apk
                 try:
                     chemin=os.path.abspath("./apk/"+apk+".apk")
@@ -112,9 +115,9 @@ class Simulation(Thread):
                 self.fenetre.setInstruction("test de l'application")
                 # On demarre le test de l'application
                 for i in range(1,int(self.repetition)+1):
-		    # On regarde si le fichier existe deja
-		    if os.path.exists("./results/"+apk+"-"+str(i)+".csv"):
-			continue
+                    # On regarde si le fichier existe deja
+                    if os.path.exists("./results/"+apk+"-"+str(i)+".csv"):
+                        continue
                     # on tient au courant l'utilisateur
                     self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" : En cours")
                     if self.powertran == 1:

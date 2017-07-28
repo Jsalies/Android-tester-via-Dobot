@@ -4,6 +4,14 @@ import platform
 import os
 
 # toutes ces commandes sont destinées à demandé/donner une information au telephone connecté à l'ordinateur via le programme "ADB"
+
+def Connect(ip):
+	'''On demarre la connection avec le telephone via le Wi-Fi'''
+	if platform.system() == "Windows":
+		subprocess.check_output(".\platform-tools\\adb connect "+ip)
+	else:
+		os.popen("adb connect "+ip)
+
 def SizeScreen():
 	'''on recupere la taille de l'ecran en pixels'''
 	if platform.system() == "Windows":

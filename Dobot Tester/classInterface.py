@@ -47,15 +47,18 @@ class Interface():
         else:
             version="x86"
         self.txt8 = Label(self.fenetre, text = platform.system()+" Python v"+ str(sys.version_info[0])+"."+str(sys.version_info[1])+"."+str(sys.version_info[2])+" "+version,fg="white",font=("Helvetica", 7, "bold italic"),bg="black")
+        self.txt9 = Label(self.fenetre, text ='IP du telephone :',fg="white",font=("Helvetica", 10, "bold"),bg="black",anchor='e')
+
         #placement des titres
         self.txt1.place(height=20,width=400,x=0,y=10)
         self.txt2.place(height=20,width=400,x=400,y=10)
-        self.txt3.place(height=20,width=150,x=20,y=50)
-        self.txt4.place(height=20,width=150,x=20,y=100)
+        self.txt3.place(height=20,width=150,x=20,y=83)
+        self.txt4.place(height=20,width=150,x=20,y=116)
         self.txt5.place(height=20,width=150,x=20,y=150)
         self.txt6.place(height=20,width=124,x=138,y=190)
         self.txt7.place(height=20,width=120,x=540,y=190)
         self.txt8.place(height=20, width=250, x=610, y=582)
+        self.txt9.place(height=20,width=150,x=20,y=50)
         #on récupere le systeme d'exploitation ainsi que la version de python
         #on definit une variable
         self.TexteInstructions = StringVar()
@@ -66,12 +69,15 @@ class Interface():
         #definitions des entrées
         self.longvalue = IntVar()
         self.hautvalue = IntVar()
+        self.IPvalue= StringVar()
         self.longvalue.set(1000)
         self.hautvalue.set(1000)
+        self.IPvalue.set("132.207.220.59")
         # notre fonction destiné à demander directement au telephone sa taille
         def autoAjust():
             # On demande directement au telephone sa taille
             try:
+                adb.Connect(self.IPvalue.get())
                 size = adb.SizeScreen()
                 self.longvalue.set(size[1])
                 self.hautvalue.set(size[0])
@@ -81,18 +87,18 @@ class Interface():
         #definition du bouton AJUSTER
         self.ajust = Button(self.fenetre, text='L/H AUTO',bg='#797DF6',font=("ms serif", 10, "bold"), command=autoAjust)
         #placement du bouton LANCER
-        self.ajust.place(height=20,width=100,x=270,y=100)
+        self.ajust.place(height=20,width=100,x=270,y=116)
         #notre fonction qui affiche un pop-up d'aide.
         def helpMe():
             msgbox.showinfo(title="Manipulation à suivre",icon='question',default='ok',message="AIDE : donne la méthode d'utilisation du programme.\nAUTO L/H: demande directement au telephone sa dimention.\n"
                                 "SYNTHESE : synthétise l'ensemble des fichiers contenus dans \"./results\" et les enregistre dans un fichier \".csv\" dans le dossier \"./synthèse\"\n\nProcédure de test:\n"
-                                "0/ Branchez le telephone, le Dobot et le(s) oscilloscope(s)\n1/ Indiquez la taille du telephone (Ou utilisez H/L AUTO).\n2/ Choisissez l'oscilloscope que vous souhaitez."
-                                "\n3/ Choisissez la frequence d'echantillonage des mesures.\n4/ Choisissez un scénario à tester."
-                                                    "\n5/ Lancez le test.\n6/ Suivez les instructions affichées dans le panneau haut droit.")
+                                "0/ Connectez le telephone et l'ordinateur au Wi-Fi.\n1/ Branchez le Dobot et le(s) oscilloscope(s)\n2/ Indiquez la taille du telephone (Ou utilisez H/L AUTO)."
+                                "\n3/ Choisissez l'oscilloscope que vous souhaitez.\n4/ Choisissez la frequence d'echantillonage des mesures.\n5/ Choisissez un scénario à tester."
+                                                    "\n6/ Lancez le test.\n7/ Suivez les instructions affichées dans le panneau haut droit.")
         #definition du bouton AIDE
         self.aide = Button(self.fenetre, text='AIDE',bg='#797DF6',font=("ms serif", 10, "bold"), command=helpMe)
         #placement du bouton AIDE
-        self.aide.place(height=20,width=100,x=270,y=50)
+        self.aide.place(height=20,width=100,x=270,y=83)
         def synthese():
             #try:
             thread1=Synthese.synthese(self)
@@ -106,12 +112,15 @@ class Interface():
         #Parametrage des entrées
         self.Longueur = Spinbox(self.fenetre,textvariable=self.longvalue, from_=1, to=10000,bg="gray")
         self.Hauteur = Spinbox(self.fenetre,textvariable=self.hautvalue, from_=1, to=10000,bg="gray")
+        self.IP = Entry(self.fenetre, textvariable=self.IPvalue, bg="gray")
         self.Nbscenar = Spinbox(self.fenetre, from_=1, to=500,bg="gray")
         self.Longueur.config()
         #placement des entrées
-        self.Longueur.place(height=20,width=75,x=170,y=50)
-        self.Hauteur.place(height=20,width=75,x=170,y=100)
-        self.Nbscenar.place(height=20,width=75,x=170,y=150)
+        self.Longueur.place(height=20,width=85,x=170,y=83)
+        self.Hauteur.place(height=20,width=85,x=170,y=116)
+        self.Nbscenar.place(height=20,width=85,x=170,y=150)
+        self.IP.place(height=20,width=85,x=170,y=50)
+
         #definition de la liste des scénarios
         self.liste = Listbox(self.fenetre,bg="gray")
         a=0
