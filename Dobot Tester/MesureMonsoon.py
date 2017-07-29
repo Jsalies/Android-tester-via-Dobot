@@ -303,7 +303,7 @@ class Monsoon:
     try:
         fichier=open(file,"w")
         fichier.write("!!!ligne inutile!!!\n")
-        fichier.write("Time,Power,Main,USB\n")
+        fichier.write("Time,Power\n")
         last_flush = time.time()
         deb=time.time()
         continuer=1
@@ -324,7 +324,7 @@ class Monsoon:
               fichier.write(str(round(10**6*(time.time()-deb),1))+",")
               data_to_print = this_sample
               fmt = ' '.join('%f' for _ in data_to_print)
-              fichier.write(str((data_to_print[0]+data_to_print[1])*4.5)+","+str(data_to_print[0]*4.5)+","+str(data_to_print[1]*4.5)+"\n")
+              fichier.write(str(data_to_print[0]*4.5)+"\n")
               sys.stdout.flush()
               offset -= native_hz
               emitted += 1              # adjust for emitting 1 output sample
@@ -351,5 +351,4 @@ if __name__ == '__main__':
   lancermesure.start()
   print("here")
   time.sleep(25)
-  print("stop")
   mon.stop(True,0,0,0,0)

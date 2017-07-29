@@ -18,7 +18,7 @@ class Interface():
 
     def boost(self):
             value=float(self.pourcent)*5.88
-            self.bar.place(height=38,width=value,x=7,y=7)
+            #self.bar.place(height=38,width=value,x=7,y=7)
 
     def __init__(self):
         #definition des variables globals
@@ -72,7 +72,7 @@ class Interface():
         self.IPvalue= StringVar()
         self.longvalue.set(1000)
         self.hautvalue.set(1000)
-        self.IPvalue.set("132.207.220.59")
+        self.IPvalue.set("XXX.XXX.XXX.XXX")
         # notre fonction destiné à demander directement au telephone sa taille
         def autoAjust():
             # On demande directement au telephone sa taille
