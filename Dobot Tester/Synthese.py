@@ -13,15 +13,21 @@ class synthese(Thread):
         self.data_entree = "./results/"
         self.frequency = float(fenetre.frequence.get())
         self.summary = []
-        self.data_sortie="WithRobot"
+        self.measurement_tools="WithRobot"
+        self.measurement_mode="WithDebug"
         if fenetre.ChoixOscillo.get()==1:
-            self.data_sortie += "_HomeSystem"
+            self.measurement_system= "HomeSystem"
         else:
-            self.data_sortie += "_MonsoonSystem"
+            self.measurement_system= "MonsoonSystem"
         if fenetre.PowerTran.get()==0:
-            self.data_sortie+="_WithoutPowertran"
+            self.measurement_method="WithoutPowertran"
         else:
-            self.data_sortie += "_WithPowertran"
+            self.measurement_method= "WithPowertran"
+        if fenetre.choixconnection.get() == 2:
+            self.measurement_protocol = "WiFi"
+        else:
+            self.measurement_protocol = "USB"
+        self.data_sortie=self.measurement_tools+"_"+self.measurement_protocol+"_"+self.measurement_mode+"_"+self.measurement_system+"_"+self.measurement_method
         print (self.data_sortie)
     def run(self):
         # On compte le nombre de fichiers à traiter
@@ -57,7 +63,13 @@ class synthese(Thread):
 
                 self.summary.append({
                     'name': file[:file.rfind('-')],
-                    'number': file[file.rfind('-')+1:file.rfind('.')],
+                    'id': file[file.rfind('-')+1:file.rfind('.')],
+                    'category': "\(O_O)/",
+                    'measurement_tools': self.measurement_tools,
+                    'measurement_mode': self.measurement_mode,
+                    'measurement_system': self.measurement_system,
+                    'measurement_method': self.measurement_method,
+                    'measurement_protocol': self.measurement_protocol,
                     'min_value': dmin, 'number_of_samples': number_of_samples,
                     'max_value': dmax, 'mean': mean, 'stdev': stdev,
                     'median_value': median, 'sum_square': sum_square,
@@ -69,9 +81,11 @@ class synthese(Thread):
                 self.fenetre.setpourcent(self.fenetre.getpourcent()+pas)
 
         os.remove("tempo.csv")
-        summary = pd.DataFrame(self.summary, columns=['name', 'number', 'number_of_samples',
+        sorted(self.summary, key=lambda k: (k['name'], k['id']))
+        summary = pd.DataFrame(self.summary, columns=['name', 'id', 'number_of_samples','category',
+                    'measurement_tools','measurement_mode','measurement_system','measurement_method','measurement_protocol',
                                                  'min_value', 'max_value', 'mean', 'stdev', 'median_value',
                                                  'sum_square', 'sum_square/frequency', 'percentile_25',
                                                  'percentile_50', 'percentile_75'])
 
-        summary.to_csv('./synthese/{}_summary.csv'.format(self.data_sortie), index=False, sep=',')
+        summary.to_csv('./synthese/{}_summary.csv'.format(self.data_sortie), index=False, sep=';')

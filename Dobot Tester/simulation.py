@@ -33,9 +33,10 @@ class Simulation(Thread):
         
     def run(self):
         """Code à exécuter pendant l'exécution du thread."""
-        #On se connecte au telephone
-        self.fenetre.setInstruction("Connection au telephone.")
-        adb.Connect(self.fenetre.IPvalue.get())
+        #Si on est en Wi-Fi, on se connecte au telephone
+        if self.fenetre.choixconnection.get() == 2:
+            self.fenetre.setInstruction("Connection au telephone.")
+            adb.Connect(self.fenetre.IPvalue.get())
         #Creation de la pile d'actions du robot        
         api = dType.load()
         #Connect Dobot
@@ -66,13 +67,13 @@ class Simulation(Thread):
                      Filelist.append(fichier)
             else:
                 Filelist.append(self.scenar)
-            #on compte le nombre de ligne de tous les scénarios que l'on va utiliser(pour la barre de chargement)
+            #on compte le nombre de lignes de tous les scénarios que l'on va utiliser(pour la barre de chargement)
             pas = 0
             for fichier in Filelist:
                 lecture = open('scenarios/' + fichier, 'r')
                 for ligne in lecture:
                     pas += 1
-                pas-=1 # pour la premiere ligne qui represente le package et la derniere qui est toujours vide
+                pas-=1 # pour la premiere ligne qui represente le package
             pas=100./float(pas*self.repetition)
             # pour informer l'utilisateur
             self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
@@ -112,7 +113,14 @@ class Simulation(Thread):
                     adb.installApk("./ressources/powertran/powertran.apk")
                 self.fenetre.setInstruction("installation de l'apk...")
                 adb.installApk(chemin)
-                self.fenetre.setInstruction("test de l'application")
+                # on fait tourner l'application une premiere fois dans le vide
+                self.fenetre.setInstruction("test préliminaire de l'apk...")
+                # on démarre l'application
+                adb.startApk(apk, package)
+                time.sleep(10)
+                # On ferme l'application
+                adb.closeApk(apk)
+                self.fenetre.setInstruction("test de l'application...")
                 # On demarre le test de l'application
                 for i in range(1,int(self.repetition)+1):
                     # On regarde si le fichier existe deja

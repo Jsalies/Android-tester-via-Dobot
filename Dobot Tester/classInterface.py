@@ -18,7 +18,7 @@ class Interface():
 
     def boost(self):
             value=float(self.pourcent)*5.88
-            #self.bar.place(height=38,width=value,x=7,y=7)
+            self.bar.place(height=38,width=value,x=7,y=7)
 
     def __init__(self):
         #definition des variables globals
@@ -72,18 +72,36 @@ class Interface():
         self.IPvalue= StringVar()
         self.longvalue.set(1000)
         self.hautvalue.set(1000)
+        # On donne acces au choix d'adresse IP
         self.IPvalue.set("XXX.XXX.XXX.XXX")
+        self.IP = Entry(self.fenetre, textvariable=self.IPvalue, bg="gray")
+        self.IP.place(height=20,width=85,x=170,y=50)
+        def lockIP():
+            self.IP.configure(state=DISABLED)
+        def unlockIP():
+            self.IP.configure(state=NORMAL)
+        lockIP()
+        # On choisi notre type de connection
+        self.choixconnection = IntVar()
+        self.connection1 = Radiobutton(self.fenetre, text="USB", variable=self.choixconnection, value=1, bg="gray",
+                                    activebackground="gray", command=lockIP)
+        self.connection2 = Radiobutton(self.fenetre, text="Wi-Fi", variable=self.choixconnection, value=2, bg="gray",
+                                    activebackground="gray", command=unlockIP)
+        self.connection1.select()
+        # on place les boutons pour choisir l'oscilloscope
+        self.connection1.place(y=50, x=320,height=20,width=50)
+        self.connection2.place(y=50, x=270,height=20,width=50)
         # notre fonction destiné à demander directement au telephone sa taille
         def autoAjust():
             # On demande directement au telephone sa taille
             try:
-                adb.Connect(self.IPvalue.get())
+                if self.choixconnection.get()==2:
+                    adb.Connect(self.IPvalue.get())
                 size = adb.SizeScreen()
                 self.longvalue.set(size[1])
                 self.hautvalue.set(size[0])
             except:
                 self.setInstruction("Veuillez renseigner la taille de l'écran du telephone")
-        autoAjust()
         #definition du bouton AJUSTER
         self.ajust = Button(self.fenetre, text='L/H AUTO',bg='#797DF6',font=("ms serif", 10, "bold"), command=autoAjust)
         #placement du bouton LANCER
@@ -112,14 +130,12 @@ class Interface():
         #Parametrage des entrées
         self.Longueur = Spinbox(self.fenetre,textvariable=self.longvalue, from_=1, to=10000,bg="gray")
         self.Hauteur = Spinbox(self.fenetre,textvariable=self.hautvalue, from_=1, to=10000,bg="gray")
-        self.IP = Entry(self.fenetre, textvariable=self.IPvalue, bg="gray")
         self.Nbscenar = Spinbox(self.fenetre, from_=1, to=500,bg="gray")
         self.Longueur.config()
         #placement des entrées
         self.Longueur.place(height=20,width=85,x=170,y=83)
         self.Hauteur.place(height=20,width=85,x=170,y=116)
         self.Nbscenar.place(height=20,width=85,x=170,y=150)
-        self.IP.place(height=20,width=85,x=170,y=50)
 
         #definition de la liste des scénarios
         self.liste = Listbox(self.fenetre,bg="gray")
