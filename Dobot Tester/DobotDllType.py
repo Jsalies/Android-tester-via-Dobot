@@ -452,19 +452,19 @@ DobotCommunicate = enum(
 def load():
     if platform.system() == "Windows":
         if ctypes.sizeof(ctypes.c_voidp) == 4:
-            return CDLL("./dlls/windows/x32/DobotDll.dll", RTLD_LOCAL)
+            return CDLL("./ressources/dlls/windows/x32/DobotDll.dll", RTLD_LOCAL)
         else:
-            return CDLL("./dlls/windows/x64/DobotDll.dll", RTLD_LOCAL)
+            return CDLL("./ressources/dlls/windows/x64/DobotDll.dll", RTLD_LOCAL)
     elif platform.system() == "Linux":
         if ctypes.sizeof(ctypes.c_voidp) == 4:
-            return cdll.LoadLibrary("./dlls/linux/x32/libDobotDll.so.1.0.0")
+            return cdll.LoadLibrary("./ressources/dlls/linux/x32/libDobotDll.so.1.0.0")
         else:
-            return cdll.LoadLibrary("./dlls/linux/x64/libDobotDll.so.1.0.0")
+            return cdll.LoadLibrary("./ressources/dlls/linux/x64/libDobotDll.so.1.0.0")
     else:
         if ctypes.sizeof(ctypes.c_voidp) == 4:
-            return CDLL("./dlls/mac/x32/libDobotDll.1.0.0.dylib", RTLD_GLOBAL)
+            return CDLL("./ressources/dlls/mac/x32/libDobotDll.1.0.0.dylib", RTLD_GLOBAL)
         else:
-            return CDLL("./dlls/mac/x64/libDobotDll.1.0.0.dylib", RTLD_GLOBAL)
+            return CDLL("./ressources/dlls/mac/x64/libDobotDll.1.0.0.dylib", RTLD_GLOBAL)
     
 def dSleep(ms):
     """

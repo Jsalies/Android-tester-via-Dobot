@@ -6,6 +6,8 @@ import os
 import simulation
 import shellcommands as adb
 import Synthese
+import DisplayGraphics
+from multiprocessing import Process
 
 try:
     from tkinter import *
@@ -31,7 +33,7 @@ class Interface():
         self.fenetre.geometry('800x600+{}+{}'.format(int(self.Htrigger),int(self.Vtrigger)))
         self.fenetre.attributes("-alpha", 0.9)
         #definition de l'arriere plan
-        self.monfond = PIL.Image.open("./pictures/background.jpeg")
+        self.monfond = PIL.Image.open("./ressources/pictures/background.jpeg")
         self.background = PIL.ImageTk.PhotoImage(self.monfond)
         self.Fond=Label(self.fenetre,image=self.background).place(x=-2,y=-2)
         #definition des titres
@@ -108,15 +110,27 @@ class Interface():
         self.ajust.place(height=20,width=100,x=270,y=116)
         #notre fonction qui affiche un pop-up d'aide.
         def helpMe():
-            msgbox.showinfo(title="Manipulation à suivre",icon='question',default='ok',message="AIDE : donne la méthode d'utilisation du programme.\nAUTO L/H: demande directement au telephone sa dimention.\n"
+            msgbox.showinfo(title="Manipulation à suivre",icon='question',default='ok',message="AIDE : donne la méthode d'utilisation du programme.\nGRAPHIQUE : affiche sous forme de graph lissé l'ensemble des fichiers contenus dans \"./ressources/graph\".\nAUTO L/H: demande directement au telephone sa dimention.\n"
                                 "SYNTHESE : synthétise l'ensemble des fichiers contenus dans \"./results\" et les enregistre dans un fichier \".csv\" dans le dossier \"./synthèse\"\n\nProcédure de test:\n"
-                                "0/ Connectez le telephone et l'ordinateur au Wi-Fi.\n1/ Branchez le Dobot et le(s) oscilloscope(s)\n2/ Indiquez la taille du telephone (Ou utilisez H/L AUTO)."
-                                "\n3/ Choisissez l'oscilloscope que vous souhaitez.\n4/ Choisissez la frequence d'echantillonage des mesures.\n5/ Choisissez un scénario à tester."
-                                                    "\n6/ Lancez le test.\n7/ Suivez les instructions affichées dans le panneau haut droit.")
+                                "0/ Connectez le telephone et l'ordinateur via le Wi-Fi ou l'USB.\n1/ Branchez le Dobot et l'oscilloscope.\n2/ Indiquez la taille du telephone (Ou utilisez H/L AUTO)."
+                                "\n3/ Choisissez l'oscilloscope que vous souhaitez.\n4/ Choisissez la fréquence d'échantillonage des mesures.\n5/ Choisissez un scénario à tester."
+                                "\n6/ Lancez le test.\n7/ Suivez les instructions affichées dans le panneau haut droit.\n\nProcédure pour le Wifi :\n0/ Connectez le telephone par USB.\n"
+                                "1/ Démarrez ADB via la commande : \"adb usb\".\n2/ Passer en protocol TCPIP via la commande  \"adb tcpip 5555\".\n2/ Débranchez le cordon usb.\n3/ Indiquez l'IP du telephone (obtensible via le telephone).")
+
+        self.HelpImage = PIL.Image.open("./ressources/pictures/help.png")  ## Chargement d'une image à partir de PIL
+        self.HelpPicture = PIL.ImageTk.PhotoImage(self.HelpImage)
         #definition du bouton AIDE
-        self.aide = Button(self.fenetre, text='AIDE',bg='#797DF6',font=("ms serif", 10, "bold"), command=helpMe)
+        self.aide = Button(self.fenetre,image=self.HelpPicture,bg='black', command=helpMe,overrelief=FLAT,borderwidth="0p",highlightthickness="1p")
         #placement du bouton AIDE
-        self.aide.place(height=20,width=100,x=270,y=83)
+        self.aide.place(height=42,width=42,x=0,y=556)
+        #notre fonction pour faire les graphiques
+        def graphique():
+            p = Process(target=DisplayGraphics.graphics, args=[self.ChoixOscillo.get()])
+            p.start()
+        # definition du bouton AIDE
+        self.graphiques = Button(self.fenetre, text='GRAPHIQUE', bg='#797DF6', font=("ms serif", 10, "bold"),command=graphique)
+        # placement du bouton AIDE
+        self.graphiques.place(height=21, width=100, x=270, y=83)
         def synthese():
             #try:
             thread1=Synthese.synthese(self)
@@ -208,7 +222,7 @@ class Interface():
         #creation du de la barre de chargement
         self.Loading = Canvas(self.fenetre, width=200, height=100,bg='white',relief="ridge",borderwidth=5)
         self.Loading.place(height=50,width=600,x=100,y=520)
-        self.monimage = PIL.Image.open("./pictures/progressbar.bmp")    ## Chargement d'une image à partir de PIL
+        self.monimage = PIL.Image.open("./ressources/pictures/progressbar.bmp")    ## Chargement d'une image à partir de PIL
         self.photo = PIL.ImageTk.PhotoImage(self.monimage)
         self.bar = Canvas(self.Loading, width=600, height=100, bg='white', borderwidth=0)
         self.bar.create_image(300, 0, image=self.photo)
