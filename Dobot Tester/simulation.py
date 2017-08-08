@@ -32,11 +32,21 @@ class Simulation(Thread):
             self.scenar=interface.liste.get(interface.liste.curselection())
         
     def run(self):
-        """Code à exécuter pendant l'exécution du thread."""
         #Si on est en Wi-Fi, on se connecte au telephone
         if self.fenetre.choixconnection.get() == 2:
             self.fenetre.setInstruction("Connection au telephone.")
             adb.Connect(self.fenetre.IPvalue.get())
+        # pour informer l'utilisateur
+        self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
+        # on demarre l'oscilloscope
+        if int(self.choixOscillo) == 2:
+            if platform.system() != "Windows":
+                Mesure = MM.Monsoon()
+            else:
+                self.fenetre.setInstruction("Le Monsoon n'est actuellement pas supporté par Windows")
+                return
+        else:
+            Mesure = OEC.OscilloscopeEnergyCollector(self.valeurfrequence, self.fenetre)
         #Creation de la pile d'actions du robot        
         api = dType.load()
         #Connect Dobot
@@ -75,19 +85,10 @@ class Simulation(Thread):
                     pas += 1
                 pas-=1 # pour la premiere ligne qui represente le package
             pas=100./float(pas*self.repetition)
-            # pour informer l'utilisateur
-            self.fenetre.setInstruction("Démarrage de l'oscilloscope.")
-            #on lance la mesure d'energie dans l'oscilloscope
-            if int(self.choixOscillo) == 2:
-                if platform.system() != "Windows":
-                    Mesure=MM.Monsoon()
-                else:
-                    self.fenetre.setInstruction("Le Monsoon n'est actuellement pas supporté par Windows")
-                    return
-            else:
-                Mesure=OEC.OscilloscopeEnergyCollector(self.valeurfrequence,self.fenetre)
             #on test le nombre de scénarios souhaités
             for scenars in Filelist:
+                if alreadydone(scenars,self.repetition):
+                    continue
                 #ouvrir le scénarios
                 File=open("./scenarios/"+scenars,'r')
                 #récuperer nom de l'apk
@@ -150,8 +151,8 @@ class Simulation(Thread):
                     # On ferme l'application
                     adb.closeApk(apk)
                     # On tient au courant l'utilisateur
-                    self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
-                    # On arete et sauvegarde la mesure d'energie
+                    self.fenetre.setInstruction("étape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
+                    # On arrete et sauvegarde la mesure d'energie
                     Mesure.stop(True,temp1,freq1,1,1)
                 #Si on utilise la methode powertran
                 if self.powertran == 1:
@@ -165,3 +166,9 @@ class Simulation(Thread):
         self.fenetre.setInstruction("Les mesures ont été enregistrées dans\nle dossier results.")
         #on deconnecte le robot
         dType.DisconnectDobot(api)
+
+def alreadydone(scenario,repetition):
+    for i in range(1,repetition+1):
+        if not os.path.exists("./results/"+scenario[0:-4]+"-"+str(i)+".csv"):
+            return False
+    return True

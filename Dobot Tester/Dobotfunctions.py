@@ -18,20 +18,26 @@ def SpeedInit(api):
 
 def Init(api):
     """ to keep a good accuracy, we calibrate our arm.
-    This function must be called before all king of arm using"""
+    This function must be called before all kind of arm using"""
     #Clean Command Queued
-    dType.SetQueuedCmdClear(api)
-    #Async Home
-    dType.SetHOMECmd(api, temp = 0, isQueued = 1)
-    #Useless movement which permit to wait the init end.
-    tempo=dType.SetPTPCmd(api, dType.PTPMode.PTPMOVLXYZMode, 210, 0, 135, 0, isQueued = 1)[0]
-    #Start to Execute Command Queued
-    dType.SetQueuedCmdStartExec(api)
-    #Wait for Executing Last Command 
-    while tempo > dType.GetQueuedCmdCurrentIndex(api)[0]:
-        dType.dSleep(100) 
-    #Stop to Execute Command Queued
-    dType.SetQueuedCmdStopExec(api)
+    retry=1
+    maxdelay=20
+    while (retry):
+        debut=time.time()
+        dType.SetQueuedCmdClear(api)
+        #Async Home
+        dType.SetHOMECmd(api, temp = 0, isQueued = 1)
+        #Useless movement which permit to wait the init end.
+        tempo=dType.SetPTPCmd(api, dType.PTPMode.PTPMOVLXYZMode, 210, 0, 135, 0, isQueued = 1)[0]
+        #Start to Execute Command Queued
+        dType.SetQueuedCmdStartExec(api)
+        #Wait for Executing Last Command
+        while tempo > dType.GetQueuedCmdCurrentIndex(api)[0] and time.time()-debut<maxdelay:
+            dType.dSleep(100)
+        #Stop to Execute Command Queued
+        dType.SetQueuedCmdStopExec(api)
+        if time.time()-debut<maxdelay:
+            retry=0
     
     
 def Calc_Z_Min(api,fenetre):
