@@ -24,6 +24,7 @@ class Interface():
 
     def __init__(self):
         #definition des variables globals
+        self.scrollinstructionneed=0
         self.pourcent=0
         #definition de la fenetre principale
         self.fenetre = Tk(className="Energy consumption tester - Dobot Magician")
@@ -125,8 +126,11 @@ class Interface():
         self.aide.place(height=42,width=42,x=0,y=556)
         #notre fonction pour faire les graphiques
         def graphique():
-            p = Process(target=DisplayGraphics.graphics, args=[self.ChoixOscillo.get()])
-            p.start()
+            if len(sorted(os.listdir("./ressources/graph/"))) == 0:
+                self.setInstruction("Pas de fichiers disponible dans \"./ressources/graph/\".")
+            else:
+                p = Process(target=DisplayGraphics.graphics, args=[self.ChoixOscillo.get()])
+                p.start()
         # definition du bouton AIDE
         self.graphiques = Button(self.fenetre, text='GRAPHIQUE', bg='#797DF6', font=("ms serif", 10, "bold"),command=graphique)
         # placement du bouton AIDE
@@ -232,7 +236,7 @@ class Interface():
                 thread1=simulation.Simulation(self)
                 thread1.start()
             except:
-                self.TexteInstructions.set("Veuillez selectionner un scénario dans la liste\nOu cocher la case \"Tout tester\"")
+                self.setInstruction("Veuillez selectionner un scénario dans la liste\nOu cocher la case \"Tout tester\"")
 
         #definition du bouton LANCER
         self.bouton = Button(self.fenetre, text='LANCER',bg='#797DF6',font=("ms serif", 10, "bold"), command=Init)
@@ -250,8 +254,15 @@ class Interface():
         self.entrer=0
         
     def setInstruction(self,texte):
-        self.TexteInstructions.set(texte)
-        
+        if self.scrollinstructionneed<6:
+            self.TexteInstructions.set(self.TexteInstructions.get() + "\n" + texte)
+            self.scrollinstructionneed+=1
+        else:
+            instruction=""
+            lineSize=texte.count("\n")
+            for ligne in self.TexteInstructions.get().split("\n")[1+lineSize:]:
+                instruction+=ligne+"\n"
+            self.TexteInstructions.set(instruction + texte)
     def setMesureEnergie(self,texte):
         self.TexteMesureEnergie.set(texte)
 

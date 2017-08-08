@@ -1,0 +1,18 @@
+music.search.player.mp3player.cut.music.Activity_MusicBrowser
+mov(483.0, 273.0) 
+touch()
+mov(490.0, 218.0) 
+touch()
+mov(471.63974, 1154.0) 
+touch()
+wait(20000) 
+mov(419.0, 1127.0) 
+touch()
+return
+mov(498.0, 291.25) 
+touch()
+mov(380.5, 1146.8427) 
+touch()
+wait(20000) 
+mov(393.0, 1144.5) 
+touch()

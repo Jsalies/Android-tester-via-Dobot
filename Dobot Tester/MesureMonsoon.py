@@ -352,3 +352,4 @@ if __name__ == '__main__':
   print("here")
   time.sleep(25)
   mon.stop(True,0,0,0,0)
+  os.remove("bob.csv")

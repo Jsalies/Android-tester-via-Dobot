@@ -44,15 +44,17 @@ def Calc_Z_Min(api,fenetre):
 ------------puis appuyer sur ENTRER / then press ENTER------------""")
     fenetre.desactive()
     while fenetre.entrer==0:
-        {
-        }
+        {}
     fenetre.desactive()
     a=dType.GetPose(api)
     return a[2]
     
-def Position(api):
+def Position(api,fenetre):
     """ pour recuperer la position du bras / to get the current arm's position"""
-    raw_input("""placez le robot en position (puis ENTREZ) / put the robot at the desired position (then ENTER) : \n""")
+    fenetre.setInstruction("""placez le robot en position (puis ENTREZ) / put the robot at the desired position (then ENTER) : \n""")
+    fenetre.desactive()
+    while fenetre.entrer == 0:
+        {}
     pos=dType.GetPose(api)
     return pos
     

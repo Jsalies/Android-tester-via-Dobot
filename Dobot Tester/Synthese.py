@@ -22,7 +22,7 @@ def description(Values):
     percentile_50 = np.percentile(data, 50)
     percentile_75 = np.percentile(data, 75)
     number_of_samples = len(data)
-    print(Values[0] + " : " + str(time.time() - deb))
+    print(Values[0] + " : " + str(round(time.time() - deb,2))+" secs")
     return [Values[0],dmin,dmax,mean,stdev,median,sum_square,sum_square_divided_by_frequency,percentile_25,percentile_50,percentile_75,number_of_samples]
 
 class synthese(Thread):
@@ -94,4 +94,4 @@ class synthese(Thread):
                                                  'percentile_50', 'percentile_75'])
 
         summary.to_csv('./synthese/{}_summary.csv'.format(self.data_sortie), index=False, sep=';')
-        self.fenetre.setInstruction("Travail terminé.\nTemps total pris pour la synthèse: " + str(round(time.time() - deb),2)+"secs")
+        self.fenetre.setInstruction("Travail terminé.\nTemps total pris pour la synthèse: " + str(round((time.time() - deb),2))+" secs")
