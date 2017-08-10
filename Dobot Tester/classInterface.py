@@ -160,23 +160,28 @@ class Interface():
         a=0
         for fichier in sorted(os.listdir('scenarios/')):
             a+=1
-            self.liste.insert(a, fichier)
+            self.liste.insert(a, fichier[0:-4])
         #placement de la ligne des scénarios
-        self.liste.place(height=200,width=329,x=25,y=230)
+        self.liste.place(height=183,width=329,x=25,y=230)
         #definition de la barre de scroll
         self.sc=Scrollbar(command=self.liste.yview)
         #postionnement de la barre de scroll
-        self.sc.place(height=200,width=20,x=350,y=230)
+        self.sc.place(height=183,width=20,x=350,y=230)
         #configuration de la barre de scroll
         self.liste.configure(yscrollcommand=self.sc.set)
         #on defini une case à cocher
         self.tousScenarios= IntVar()
         self.toutfaire = Checkbutton(self.fenetre,variable=self.tousScenarios, text="Tout tester",bg="gray",activebackground="gray")        
-        self.toutfaire.place(height=15,width=75,x=270,y=410)
-        # on defini une case à cocher
+        self.toutfaire.place(height=18,width=105,x=265,y=412)
+        # on defini une case à cocher pour le powertran
         self.PowerTran = IntVar()
         self.PowerTranMethode = Checkbutton(self.fenetre, variable=self.PowerTran, text="PowerTran Methode", bg="gray",activebackground="gray")
-        self.PowerTranMethode.place(height=15, width=127, x=135, y=410)
+        self.PowerTranMethode.place(height=18, width=140, x=125, y=412)
+        # on defini une case à cocher pour le mode debug
+        self.debug = IntVar()
+        self.modedebug = Checkbutton(self.fenetre, variable=self.debug, text="Debugger", bg="gray",
+                                            activebackground="gray")
+        self.modedebug.place(height=18, width=100, x=25, y=412)
         #on definit une variable
         self.TexteMesureEnergie = StringVar()
         self.TexteMesureEnergie.set("Ici apparaitrons les résultats du test")
@@ -254,15 +259,13 @@ class Interface():
         self.entrer=0
         
     def setInstruction(self,texte):
-        if self.scrollinstructionneed<6:
-            self.TexteInstructions.set(self.TexteInstructions.get() + "\n" + texte)
-            self.scrollinstructionneed+=1
-        else:
-            instruction=""
-            lineSize=texte.count("\n")
-            for ligne in self.TexteInstructions.get().split("\n")[1+lineSize:]:
-                instruction+=ligne+"\n"
-            self.TexteInstructions.set(instruction + texte)
+        fullnewline=(self.TexteInstructions.get()+"\n"+texte).split("\n")
+        partialnewline=""
+        for i in range(max(0,len(fullnewline)-7),len(fullnewline)):
+            partialnewline+=fullnewline[i]+"\n"
+        partialnewline.strip("\n")
+        self.TexteInstructions.set(partialnewline.strip("\n"))
+
     def setMesureEnergie(self,texte):
         self.TexteMesureEnergie.set(texte)
 

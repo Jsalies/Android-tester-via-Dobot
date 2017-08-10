@@ -34,7 +34,10 @@ class synthese(Thread):
         self.frequency = float(fenetre.frequence.get())
         self.summary = []
         self.measurement_tools="WithRobot"
-        self.measurement_mode="WithDebug"
+        if fenetre.debug.get()==0:
+            self.measurement_mode="WithoutDebug"
+        else:
+            self.measurement_mode="WithDebug"
         if fenetre.ChoixOscillo.get()==1:
             self.measurement_system= "HomeSystem"
         else:
@@ -44,7 +47,7 @@ class synthese(Thread):
         else:
             self.measurement_method= "WithPowertran"
         if fenetre.choixconnection.get() == 2:
-            self.measurement_protocol = "WiFi"
+            self.measurement_protocol = "WIFI"
         else:
             self.measurement_protocol = "USB"
         self.data_sortie=self.measurement_tools+"_"+self.measurement_protocol+"_"+self.measurement_mode+"_"+self.measurement_system+"_"+self.measurement_method
@@ -87,8 +90,8 @@ class synthese(Thread):
             self.fenetre.setpourcent(self.fenetre.getpourcent()+pas)
 
         sorted(self.summary, key=lambda k: (k['name'], k['id']))
-        summary = pd.DataFrame(self.summary, columns=['name', 'id', 'number_of_samples','category',
-                    'measurement_tools','measurement_mode','measurement_system','measurement_method','measurement_protocol',
+        summary = pd.DataFrame(self.summary, columns=['name', 'id','category',
+                    'measurement_tools','measurement_system','measurement_mode','measurement_method','measurement_protocol','number_of_samples',
                                                  'min_value', 'max_value', 'mean', 'stdev', 'median_value',
                                                  'sum_square', 'sum_square/frequency', 'percentile_25',
                                                  'percentile_50', 'percentile_75'])

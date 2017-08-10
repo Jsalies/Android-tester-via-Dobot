@@ -24,6 +24,7 @@ class Simulation(Thread):
         self.largueur=interface.Longueur.get()
         self.longueur=interface.Hauteur.get()
         self.repetition=interface.Nbscenar.get()
+        self.choixDebug=interface.debug.get()
         self.choixOscillo=interface.ChoixOscillo.get()
         self.tousScenarios=interface.tousScenarios.get()
         self.valeurfrequence=interface.valeurfrequence.get()
@@ -76,7 +77,7 @@ class Simulation(Thread):
                  for fichier in sorted(os.listdir('scenarios/')):
                      Filelist.append(fichier)
             else:
-                Filelist.append(self.scenar)
+                Filelist.append(self.scenar+".sim")
             #on compte le nombre de lignes de tous les scénarios que l'on va utiliser(pour la barre de chargement)
             pas = 0
             for fichier in Filelist:
@@ -87,7 +88,7 @@ class Simulation(Thread):
             pas=100./float(pas*self.repetition)
             #on test le nombre de scénarios souhaités
             for scenars in Filelist:
-                if alreadydone(scenars,self.repetition):
+                if alreadydone(scenars,int(self.repetition)):
                     continue
                 #ouvrir le scénarios
                 File=open("./scenarios/"+scenars,'r')
@@ -105,7 +106,10 @@ class Simulation(Thread):
                 File.close()
                 #on recupere le chemin absolu de l'apk
                 try:
-                    chemin=os.path.abspath("./apk/"+apk+".apk")
+                    if self.choixDebug==0:
+                        chemin = os.path.abspath("./apk/nodebug/"+apk+".apk")
+                    else:
+                        chemin = os.path.abspath("./apk/debug/" + apk + ".apk")
                 except:
                     self.fenetre.setInstruction("l'apk spécifié en ligne 1 dans le dossier scénario \nn'est pas présent dans le dossier apk. \nVeuillez l'ajouter ou modifier son nom.")
                     return
