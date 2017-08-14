@@ -1,0 +1,16 @@
+com.mjc.mediaplayer.CuteMainActivity
+mov(160.3583, 221.3583) 
+touch()
+mov(375.0, 192.25) 
+touch()
+mov(440.5, 175.0) 
+touch()
+wait(20000) 
+mov(386.87292, 1137.3729) 
+touch()
+return
+mov(521.25, 277.0) 
+touch()
+wait(20000) 
+mov(393.9054, 1125.5474) 
+touch()

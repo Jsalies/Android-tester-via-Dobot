@@ -1,0 +1,13 @@
+com.android.camera.MainActivity
+mov(581.5, 1127.0082) 
+touch()
+scroll(498.5, 865.5, 470, 760.51636)
+mov(380, 1099.75) 
+touch()
+wait(5000) 
+mov(380, 1099.75)  
+touch()
+wait(5000) 
+mov(380, 1099.75) 
+touch()
+wait(5000) 

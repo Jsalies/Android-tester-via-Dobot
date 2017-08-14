@@ -1,0 +1,12 @@
+com.asuszenfone.camerahd.screens.CameraActivity
+mov(670, 50.5) 
+touch()
+mov(375, 1130)
+touch() 
+wait(5000) 
+mov(375, 1130)
+touch()
+wait(5000)
+mov(375, 1130)
+touch()
+wait(5000)

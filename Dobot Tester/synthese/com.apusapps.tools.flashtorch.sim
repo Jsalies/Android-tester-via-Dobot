@@ -1,0 +1,9 @@
+com.apusapps.tools.flashtorch.TorchMainActivity
+wait(5000) 
+mov(418.27484, 565.5) 
+touch()
+mov(397.75, 561.5) 
+touch()
+wait(5000) 
+mov(437.75, 551.25) 
+touch()

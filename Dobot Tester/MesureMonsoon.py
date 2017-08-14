@@ -333,10 +333,10 @@ class Monsoon:
             if now - last_flush >= 0.99:  # flush every second
               sys.stdout.flush()
               last_flush = now
+        fichier.close()
     except KeyboardInterrupt:
         print >>sys.stderr, "interrupted"
     self.StopDataCollection()
-    fichier.close()
 
   def stop(self,value,temp1,freq1,temp2,freq2):
       global continuer

@@ -78,7 +78,6 @@ class Robot():
                      | scroller
                      | retourner commande
                      | retourner
-
                      '''
         # when we meet "move(number,number)"
         def p_bouger(p):
