@@ -33,7 +33,10 @@ class synthese(Thread):
         self.data_entree = "./results/"
         self.frequency = float(fenetre.frequence.get())
         self.summary = []
-        self.measurement_tools="WithRobot"
+        if fenetre.Robot.get()==1:
+            self.measurement_tools = "WithRobot"
+        else:
+            self.measurement_tools = "WithoutRobot"
         if fenetre.debug.get()==0:
             self.measurement_mode="WithoutDebug"
         else:

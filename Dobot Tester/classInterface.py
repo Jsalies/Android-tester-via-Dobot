@@ -223,6 +223,16 @@ class Interface():
         # on place les boutons pour choisir l'oscilloscope
         self.oscillo1.place(y=400, x=580)
         self.oscillo2.place(y=400, x=440)
+        # on choisi si on utilise le robot ou non.
+        self.Robot = IntVar()
+        self.withRobot = Radiobutton(self.fenetre, text="WithRobot", variable=self.Robot, value=1, bg="gray",
+                                    activebackground="gray")
+        self.withoutRobot = Radiobutton(self.fenetre, text="WithoutRobot", variable=self.Robot, value=2, bg="gray",
+                                    activebackground="gray")
+        self.withRobot.select()
+        # on place les boutons pour le robot ou non
+        self.withRobot.place(y=443, x=300,width=100)
+        self.withoutRobot.place(y=443, x=400,width=100)
         #on definit une variable (% de la barre)
         self.pourcentafficher = StringVar()
         self.pourcentafficher.set("0%")
@@ -242,11 +252,10 @@ class Interface():
                 thread1.start()
             except:
                 self.setInstruction("Veuillez selectionner un scénario dans la liste\nOu cocher la case \"Tout tester\"")
-
         #definition du bouton LANCER
         self.bouton = Button(self.fenetre, text='LANCER',bg='#797DF6',font=("ms serif", 10, "bold"), command=Init)
         #placement du bouton LANCER
-        self.bouton.place(height=30,width=100,x=350,y=460)
+        self.bouton.place(height=30,width=100,x=350,y=480)
         #on crée une variable pour savoir quand on appuie sur entrer
         self.entrer=0
         #on incremente une variable si la touche entrer est appuyée
