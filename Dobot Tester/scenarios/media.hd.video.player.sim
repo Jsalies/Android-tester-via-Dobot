@@ -1,8 +1,0 @@
-org.videolan.vlc.gui.MainActivity
-mov(620.25, 822.5) 
-touch()
-mov(216.5, 277.75) 
-touch()
-wait(30000) 
-return
-touch()

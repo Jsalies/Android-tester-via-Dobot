@@ -1,0 +1,18 @@
+net.jimblackler.newswidget.MainTabActivity
+mov(430.2969, 399.0) 
+touch()
+wait(7000) 
+scroll(444.0, 598.5, 1034.5, 174.5, 40) 
+wait(7000) 
+scroll(392.0, 573.5, 976.0, 127.0, 40) 
+wait(7000) 
+scroll(391.5, 508.5, 971.0, 140.957, 40) 
+return 
+wait(2000) 
+mov(436.11728, 605.5) 
+touch()
+wait(7000) 
+scroll(402.5, 538.5, 992.0, 208.0, 40) 
+wait(7000) 
+scroll(403.0, 534.5, 955.0, 260.5, 40) 
+wait(7000) 

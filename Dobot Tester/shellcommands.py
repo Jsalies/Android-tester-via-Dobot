@@ -94,3 +94,14 @@ def Luminosity(value):
 		subprocess.check_output(".\platform-tools\\adb shell settings put system screen_brightness "+str(value))
 	else:
 		os.popen("adb shell settings put system screen_brightness "+str(value))
+
+
+def RobotiumTest(debug,apk):
+	if debug==True:
+		isdebug="-e debug true "
+	else:
+		isdebug=""
+	if platform.system() == "Windows":
+		subprocess.check_output(".\platform-tools\\adb shell am instrument "+ isdebug +"-w "+ apk +".test/android.test.InstrumentationTestRunner")
+	else:
+		os.popen("adb shell am instrument "+ isdebug +"-w "+ apk +".test/android.test.InstrumentationTestRunner")

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from multiprocessing.pool import Pool
+import multiprocessing as mp
 from threading import Thread
 import pandas as pd
 import numpy as np
@@ -32,6 +33,7 @@ class synthese(Thread):
         self.fenetre=fenetre
         self.data_entree = "./results/"
         self.frequency = float(fenetre.frequence.get())
+        self.nbproc = int(mp.cpu_count()/2)
         self.summary = []
         if fenetre.Robot.get()==1:
             self.measurement_tools = "WithRobot"
@@ -69,7 +71,7 @@ class synthese(Thread):
         for file in sorted(os.listdir(self.data_entree)):
             if file.endswith('.csv'):
                 MultiListe.append([file,self.frequency])
-        multiprocessing=Pool(4)
+        multiprocessing=Pool(self.nbproc)
         Values=multiprocessing.map(description,MultiListe)
 
         for resultat in Values:

@@ -1,0 +1,16 @@
+ca.cbc.android.news.ui.SplashActivity
+mov(433.5, 646.0) 
+touch()
+wait(7000) 
+scroll(539.5, 618.0, 1049.5, 610.0, 40) 
+wait(7000) 
+scroll(523.5, 521.0, 1019.5, 604.0, 40) 
+wait(7000) 
+return 
+mov(240.70609, 1087.5) 
+touch()
+wait(7000) 
+scroll(599.0, 611.5, 1075.5, 745.0, 40) 
+wait(7000) 
+scroll(531.5, 673.5, 990.5, 657.5, 40) 
+wait(7000) 
