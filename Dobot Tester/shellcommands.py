@@ -98,10 +98,10 @@ def Luminosity(value):
 
 def RobotiumTest(debug,apk):
 	if debug==True:
-		isdebug="-e debug true "
+		debug=""
 	else:
-		isdebug=""
+		debug="-e debug false "
 	if platform.system() == "Windows":
-		subprocess.check_output(".\platform-tools\\adb shell am instrument "+ isdebug +"-w "+ apk +".test/android.test.InstrumentationTestRunner")
+		subprocess.check_output(".\platform-tools\\adb shell am instrument "+ debug +"-w "+ apk +".test/android.test.InstrumentationTestRunner")
 	else:
-		os.popen("adb shell am instrument "+ isdebug +"-w "+ apk +".test/android.test.InstrumentationTestRunner")
+		os.popen("adb shell am instrument "+ debug +"-w "+ apk +".test/android.test.InstrumentationTestRunner")

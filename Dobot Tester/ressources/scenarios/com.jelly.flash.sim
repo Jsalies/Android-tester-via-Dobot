@@ -1,9 +1,9 @@
 com.jelly.flash.FlashActivity
 wait(5000) 
-mov(334.75, 670.5) 
+mov(384, 690) 
 touch()
-mov(409.0, 723.5) 
+mov(384, 690) 
 touch()
 wait(5000) 
-mov(389.5, 703.5) 
+mov(384, 690) 
 touch()

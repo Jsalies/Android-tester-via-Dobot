@@ -1,7 +1,7 @@
 com.axhdplayer.videoplayer.ad.MediaListActivity
-mov(481.0, 253.5) 
+mov(384, 253.5) 
 touch()
-mov(191.0, 270.75) 
+mov(384, 270.75) 
 touch()
 wait(30000) 
 return

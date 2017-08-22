@@ -5,4 +5,3 @@ wait(20000)
 mov(380.0, 652.5) 
 touch()
 return
-touch()
