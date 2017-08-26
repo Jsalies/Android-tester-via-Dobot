@@ -1,4 +1,9 @@
+############PACKAGE############
 music.search.player.mp3player.cut.music.Activity_MusicBrowser
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(483.0, 273.0) 
 touch()
 mov(384, 218.0) 

@@ -31,10 +31,17 @@ class graphics():
             resultat = multiprocessing.map(graphicsCalculs, multifile)
             pas=100./len(multifile)
             nbfile=len(multifile)
+            LenMin = len(resultat[0])
             for curve in resultat:
+                if LenMin>len(curve):
+                    LenMin=len(curve)
                 nbfile -= 1
                 r,v,b=Get_RGB_Color(nbfile*pas)
                 plt.plot(curve,color=(r,v,b))
+            Moyenne = LenMin * [0]
+            for curve in resultat:
+                Moyenne += curve[0:LenMin]
+            plt.plot(Moyenne / len(resultat), "b:", linewidth=3,label="Average")
             print("DONE!! (durée total : "+str(round(time.time()-debfile,1))+" secs)")
 
         #on génere les moyennes des courbes situées dans les dossiers de ./ressources/graph/
@@ -57,8 +64,7 @@ class graphics():
 
         #on affiche tout
         print("durée total de la génération des graphs : " + str(round(time.time() - deb, 2)) + "secs")
-        if len(multidir)!=0:
-            plt.legend()
+        plt.legend()
         plt.show()
 
 def FileAndDirectories(path,filelist,dirlist, smoothingValues):

@@ -1,4 +1,9 @@
+############PACKAGE############
 org.videolan.vlc.gui.MainActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(180.25, 299.5) 
 touch()
 wait(30000) 

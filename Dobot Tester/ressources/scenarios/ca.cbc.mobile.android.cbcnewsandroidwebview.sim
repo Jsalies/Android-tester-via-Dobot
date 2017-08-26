@@ -1,4 +1,15 @@
+############PACKAGE############
 ca.cbc.android.news.ui.SplashActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+mov(50, 1160)
+touch()
+mov(384, 680.0) 
+touch()
+mov(700, 646.0) 
+touch()
+########SIMULATION CODE########
 mov(384, 646.0) 
 touch()
 touch()

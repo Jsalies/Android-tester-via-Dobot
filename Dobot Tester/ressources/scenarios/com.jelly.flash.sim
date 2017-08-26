@@ -1,4 +1,9 @@
+############PACKAGE############
 com.jelly.flash.FlashActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 wait(5000) 
 mov(384, 690) 
 touch()

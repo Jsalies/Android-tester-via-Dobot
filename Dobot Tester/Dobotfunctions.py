@@ -51,7 +51,7 @@ def Calc_Z_Min(api,fenetre):
     
 def Position(api,fenetre):
     """ pour recuperer la position du bras / to get the current arm's position"""
-    fenetre.setInstruction("""placez le robot en position (puis ENTREZ) / put the robot at the desired position (then ENTER) : \n""")
+    fenetre.setInstruction("""placez le robot en position (puis ENTREZ) / put the robot at the desired position (then ENTER) : """)
     fenetre.desactive()
     while fenetre.entrer == 0:
         {}
@@ -87,3 +87,48 @@ def Scroll(api,x_begin,y_begin,x_end,y_end,z_min):
     Movement(api,x_begin,y_begin,z_min)
     Movement(api,x_end,y_end,z_min)
     Movement(api,x_end,y_end,z_min+30)
+
+def PositionAndTexte(api,fenetre,texte):
+    """ pour recuperer la position du bras / to get the current arm's position"""
+    fenetre.setInstruction(texte)
+    fenetre.desactive()
+    while fenetre.entrer == 0:
+        {}
+    pos=dType.GetPose(api)
+    return pos
+
+def HorizontalTesting(fenetre):
+    api = dType.load()
+    # Connection au  Dobot
+    state = dType.ConnectDobot(api, "", 115200)[0]
+    # si le robot est dans le bon etat
+    if (state == dType.DobotConnect.DobotConnect_NotFound):
+        fenetre.setInstruction("Veuillez brancher le Dobot Magician ou installez les\ndrivers correspondants.")
+        return
+    elif (state == dType.DobotConnect.DobotConnect_Occupied):
+        fenetre.setInstruction("Veuillez libérer le port USB du robot et Réessayer.")
+        return
+    else:
+        fenetre.setInstruction("Dobot Magician bien connecté. Démarrage du test.")
+        z=PositionAndTexte(api, fenetre, "placer le bras à son point le plus bas : ")[-1]
+        HG=PositionAndTexte(api, fenetre, "placer le bras dans le coin haut gauche : ")
+        HD=PositionAndTexte(api, fenetre, "placer le bras dans le coin haut droit : ")
+        BG=PositionAndTexte(api, fenetre, "placer le bras dans le coin bas gauche : ")
+        BD=PositionAndTexte(api, fenetre, "placer le bras dans le coin bas droit : ")
+        fenetre.setInstruction("debut du test (appuyer sur une touche pour arrêter).")
+        fenetre.desactive()
+        while(True):
+            Movement(api,HG[0],HG[1],z)
+            if fenetre.entrer == 1:
+                break
+            Movement(api, HD[0], HD[1],z)
+            if fenetre.entrer == 1:
+                break
+            Movement(api, BG[0], BG[1],z)
+            if fenetre.entrer == 1:
+                break
+            Movement(api, BD[0], BD[1],z)
+            if fenetre.entrer == 1:
+                break
+        fenetre.setInstruction("fin du test.")
+

@@ -1,4 +1,9 @@
+############PACKAGE############
 com.android.camera.H5View
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 wait(1000)
 touch()
 mov(330.0167, 762.25836) 

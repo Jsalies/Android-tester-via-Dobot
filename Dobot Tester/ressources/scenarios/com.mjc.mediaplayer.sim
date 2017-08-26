@@ -1,4 +1,9 @@
+############PACKAGE############
 com.mjc.mediaplayer.CuteMainActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(160.3583, 221.3583) 
 touch()
 mov(384, 180) 

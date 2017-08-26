@@ -1,4 +1,9 @@
+############PACKAGE############
 com.aol.mobile.techcrunch.ui.MainActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(384, 357.0) 
 touch()
 wait(7000) 

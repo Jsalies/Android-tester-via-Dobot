@@ -324,7 +324,7 @@ class Monsoon:
               fichier.write(str(round(10**6*(time.time()-deb),1))+",")
               data_to_print = this_sample
               fmt = ' '.join('%f' for _ in data_to_print)
-              fichier.write(str(data_to_print[0]*4.5)+"\n")
+              fichier.write(str(round(data_to_print[0]*4.5,4))+"\n")
               sys.stdout.flush()
               offset -= native_hz
               emitted += 1              # adjust for emitting 1 output sample

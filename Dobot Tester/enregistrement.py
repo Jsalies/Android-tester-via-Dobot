@@ -42,9 +42,10 @@ class Enregistrement():
                             v1 = (self.dataRead)[block][element]
                             v2 = (self.dataRead)[block + 1][element]
                             power = v1 * v2
-                            csv_file.write(str(self.TIME_INIT) + "," + str(self.correction*v1 * v2) + "\n")  # power on phone
+                            csv_file.write(str(self.TIME_INIT) + "," + str(round(self.correction*v1 * v2,4)) + "\n")  # power on phone
                             self.TIME_INIT = self.TIME_INIT + period
-                            csv_file.flush()
+                            if platform.system()=="Windows":
+                                csv_file.flush()
                         block = block + 2
                     csv_file.close()
             #si nous calculons les valeurs via le gain/resistance
@@ -58,8 +59,9 @@ class Enregistrement():
                         voltageDifference = float(v2 / self.GAIN)
                         current = voltageDifference / self.RESISTOR
                         power = v1 * current
-                        csv_file.write(str(self.correction*power) + "\n")  # power on phone
-                        csv_file.flush()
+                        csv_file.write(str(round(self.correction*power,4)) + "\n")  # power on phone
+                        if platform.system() == "Windows":
+                            csv_file.flush()
                     block = block + 2
                 csv_file.close()
 

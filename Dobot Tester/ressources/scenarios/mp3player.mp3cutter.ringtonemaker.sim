@@ -1,4 +1,9 @@
+############PACKAGE############
 mp3player.mp3cutter.ringtonemaker.Activity_main
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(230.5, 470.0) 
 touch()
 mov(384, 571.75) 

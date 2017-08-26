@@ -1,7 +1,17 @@
+############PACKAGE############
 com.calf.led.flash.light.activity.MainActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+wait(1000) 
+mov(384, 576.25) 
+touch()
+mov(384, 701.5082) 
+touch()
+########SIMULATION CODE########
 wait(5000) 
 mov(384, 576.25) 
 touch()
 mov(384, 701.5082) 
 touch()
-wait(5000) 
+wait(5000)

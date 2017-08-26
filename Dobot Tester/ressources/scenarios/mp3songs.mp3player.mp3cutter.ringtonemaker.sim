@@ -1,4 +1,9 @@
+############PACKAGE############
 com.music.player.mp3.player.cut.MainActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(203.5, 400.5) 
 touch()
 mov(384, 293.0) 

@@ -1,4 +1,14 @@
+############PACKAGE############
 com.ap.ui.SplashActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+mov(384, 615) 
+touch()
+wait(4000)
+mov(250, 730)
+touch()
+########SIMULATION CODE########
 wait(2000)
 mov(384, 275.5) 
 touch()
@@ -6,12 +16,12 @@ wait(7000)
 scroll(384, 1049.5, 384, 539.5) 
 wait(7000) 
 scroll(384, 1049.5, 384, 539.5) 
-wait(7000) 
+wait(7000)
 return 
-mov(384, 550.66003) 
+mov(384, 550.66003)
 touch()
 wait(7000) 
 scroll(384, 1049.5, 384, 539.5) 
 wait(7000) 
 scroll(384, 1049.5, 384, 539.5) 
-wait(7000) 
+wait(7000)

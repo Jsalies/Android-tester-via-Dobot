@@ -1,4 +1,9 @@
+############PACKAGE############
 com.apusapps.tools.flashtorch.TorchMainActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 wait(5000) 
 mov(384, 550) 
 touch()

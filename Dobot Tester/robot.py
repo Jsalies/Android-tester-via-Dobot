@@ -23,13 +23,12 @@ import Dobotfunctions as Dfonct
 
 class Robot():
     
-    def __init__(self,robot,Ecran,fenetre,Zmin,language,pas):
+    def __init__(self,robot,Ecran,fenetre,Zmin,language):
         self.robot=robot
         self.Ecran=Ecran
         self.fenetre=fenetre
         self.Zmin=Zmin
         self.language=language
-        self.pas=pas
 
     def action(self):
         # we define the required tokens for our langage.
@@ -84,29 +83,25 @@ class Robot():
             ''' bouger : move lbracket digit separator digit rbracket'''
             coord=self.Ecran.Calc_Coordinates(p[3],p[5])
             Dfonct.Movement(self.robot,coord[0],coord[1],self.Zmin+30)
-            self.fenetre.setpourcent(self.fenetre.getpourcent()+self.pas)
-    
+
         #when we meet "touch"/"touch()
         def p_toucher(p):
             ''' toucher : touch lbracket rbracket
                         | touch
                         '''
             Dfonct.Touch(self.robot,self.Zmin)
-            self.fenetre.setpourcent(self.fenetre.getpourcent()+self.pas)
 
         #when we meet "wait(xxx)"
         def p_attendre(p):
             ''' attendre : wait lbracket digit rbracket'''
             time.sleep(float(p[3])/1000.)
-            self.fenetre.setpourcent(self.fenetre.getpourcent()+self.pas)
-    
+
 
         def p_scroller(p):
             ''' scroller : scroll lbracket digit separator digit separator digit separator digit rbracket'''
             coord1=self.Ecran.Calc_Coordinates(p[3],p[5])
             coord2=self.Ecran.Calc_Coordinates(p[7],p[9])
             Dfonct.Scroll(self.robot,coord1[0],coord1[1],coord2[0],coord2[1],self.Zmin)
-            self.fenetre.setpourcent(self.fenetre.getpourcent()+self.pas)
 
         def p_retourner(p):
             ''' retourner : return'''

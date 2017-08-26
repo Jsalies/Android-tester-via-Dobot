@@ -1,4 +1,9 @@
+############PACKAGE############
 com.android.camera.CameraActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(580.5, 1125.0) 
 touch()
 scroll(481.75, 880.5,425.25, 740.75)

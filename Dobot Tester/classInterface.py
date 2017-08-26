@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import platform
+import threading
+
 import PIL.Image
 import PIL.ImageTk
 import os
@@ -7,6 +9,7 @@ import simulation
 import shellcommands as adb
 import Synthese
 import DisplayGraphics
+import Dobotfunctions as dbf
 from multiprocessing import Process
 
 try:
@@ -38,7 +41,7 @@ class Interface():
         self.background = PIL.ImageTk.PhotoImage(self.monfond)
         self.Fond=Label(self.fenetre,image=self.background).place(x=-2,y=-2)
         #definition des titres
-        self.txt1 = Label(self.fenetre, text ='caractéristiques de l\'écran du téléphone :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
+        self.txt1 = Label(self.fenetre, text ='caractéristiques du téléphone :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
         self.txt2 = Label(self.fenetre, text ='instructions :',fg="white",font=("Helvetica", 10, "bold italic"),bg="black")
         self.txt3 = Label(self.fenetre, text ='Largueur (en Pixels) :',fg="white",anchor='e',font=("Helvetica", 10, "bold"),bg="black")
         self.txt4 = Label(self.fenetre, text ='Hauteur (en Pixels) :',fg="white",anchor='e',font=("Helvetica", 10, "bold"),bg="black")
@@ -113,9 +116,10 @@ class Interface():
         def helpMe():
             msgbox.showinfo(title="Manipulation à suivre",icon='question',default='ok',message="AIDE : donne la méthode d'utilisation du programme.\nGRAPHIQUE : affiche sous forme de graph lissé l'ensemble des fichiers contenus dans \"./ressources/graph\".\nAUTO L/H: demande directement au telephone sa dimention.\n"
                                 "SYNTHESE : synthétise l'ensemble des fichiers contenus dans \"./results\" et les enregistre dans un fichier \".csv\" dans le dossier \"./synthèse\"\n\nProcédure de test:\n"
-                                "0/ Connectez le telephone et l'ordinateur via le Wi-Fi ou l'USB.\n1/ Branchez le Dobot et l'oscilloscope.\n2/ Indiquez la taille du telephone (Ou utilisez H/L AUTO)."
+                                "0/ Connectez le telephone et l'ordinateur via le Wi-Fi ou l'USB.\n1/ Branchez le Dobot (si necessaire) et l'oscilloscope.\n2/ Indiquez la taille du telephone en pixels (Ou utilisez H/L AUTO)."
                                 "\n3/ Choisissez l'oscilloscope que vous souhaitez.\n4/ Choisissez la fréquence d'échantillonage des mesures.\n5/ Choisissez un scénario à tester."
-                                "\n6/ Lancez le test.\n7/ Suivez les instructions affichées dans le panneau haut droit.\n\nProcédure pour le Wifi :\n0/ Connectez le telephone par USB.\n"
+                                "\n6/ Choisissez le mode debug ou non.\n7/ Choissisez le robot ou non.\n"
+                                "8/ Lancez la simulation.\n9/ Suivez les instructions affichées dans le panneau haut droit.\n\nProcédure pour le Wifi :\n0/ Connectez le telephone par USB.\n"
                                 "1/ Démarrez ADB via la commande : \"adb usb\".\n2/ Passer en protocol TCPIP via la commande  \"adb tcpip 5555\".\n2/ Débranchez le cordon usb.\n3/ Indiquez l'IP du telephone (obtensible via le telephone).")
 
         self.HelpImage = PIL.Image.open("./ressources/pictures/help.png")  ## Chargement d'une image à partir de PIL
@@ -197,17 +201,18 @@ class Interface():
         self.txt10 = Label(self.fenetre, text ='Hz',fg="black",font=("Helvetica", 10, "bold italic"),bg="gray")
         self.txt10.place(height=20,width=20,y=402,x=745)         
         self.frequence = IntVar()
-        self.frequence.set(10000)
+        self.frequence.set(125000)
         self.valeurfrequence = Spinbox(self.fenetre,textvariable=self.frequence, from_=5000, to=200000,bg="gray")
         self.valeurfrequence.place(width=80,height=20,y=402,x=665)
         # on force la valeur de la frequence pour le monsoon
-        self.tempo=10000
+        self.tempo=125000
         def blocage():
             self.tempo=self.frequence.get()
             self.frequence.set(5000)
             self.valeurfrequence.configure(state=DISABLED)
-
         def deblocage():
+            if self.valeurfrequence.config("state")[-1]=="normal":
+                return
             self.frequence.set(self.tempo)
             self.valeurfrequence.configure(state=NORMAL)
         # on defini les boutons pour choisir l'oscilloscope
@@ -255,7 +260,14 @@ class Interface():
         #definition du bouton LANCER
         self.bouton = Button(self.fenetre, text='LANCER',bg='#797DF6',font=("ms serif", 10, "bold"), command=Init)
         #placement du bouton LANCER
-        self.bouton.place(height=30,width=100,x=350,y=480)
+        self.bouton.place(height=30,width=100,x=350,y=484)
+        # definition de la fonction de calibrage
+        def calibrer():
+            threading.Thread(target=dbf.HorizontalTesting(self)).start()
+        # definition du bouton Calibrage
+        self.calibrage = Button(self.fenetre, text='Calibrage inclinaison téléphone', bg='#797DF6', font=("ms serif", 8, "bold"),command=calibrer)
+        # placement du bouton LANCER
+        self.calibrage.place(height=15, width=201, x=300, y=465)
         #on crée une variable pour savoir quand on appuie sur entrer
         self.entrer=0
         #on incremente une variable si la touche entrer est appuyée

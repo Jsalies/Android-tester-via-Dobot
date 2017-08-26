@@ -1,4 +1,9 @@
+############PACKAGE############
 com.logizap.mytorch.mytorch.MainActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 wait(5000) 
 mov(384, 605) 
 touch()

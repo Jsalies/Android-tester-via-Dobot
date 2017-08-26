@@ -1,4 +1,9 @@
+############PACKAGE############
 com.axhdplayer.videoplayer.ad.MediaListActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(384, 253.5) 
 touch()
 mov(384, 270.75) 

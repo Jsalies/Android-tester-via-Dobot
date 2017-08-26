@@ -80,32 +80,14 @@ class Simulation(Thread):
                  Filelist.append(fichier)
         else:
             Filelist.append(self.scenar+".sim")
-        #on compte le nombre de lignes de tous les scénarios que l'on va utiliser(pour la barre de chargement)
-        pas = 0
-        for fichier in Filelist:
-            lecture = open('scenarios/' + fichier, 'r')
-            for ligne in lecture:
-                pas += 1
-            pas-=1 # pour la premiere ligne qui represente le package
-        pas=100./float(pas*self.repetition)
         #on test le nombre de scénarios souhaités
+        num_scenar=0
         for scenars in Filelist:
+            num_test=0
             if alreadydone(scenars,int(self.repetition)):
                 continue
-            #ouvrir le scénarios
-            File=open("./scenarios/"+scenars,'r')
-            #récuperer nom de l'apk
-            apk=scenars[0:-4]
-            #recuperer le package pour le focus
-            package=(File.readline()).strip('\n')
-            #récuperer le language pour le robot
-            lignecourante=File.readline()
-            language=""
-            while len(lignecourante)!=0:
-                language+=lignecourante
-                lignecourante=File.readline()
-            #fermer le fichier
-            File.close()
+            #recuperer les valeurs utiles du scénarios
+            apk, package, occurenceInit, languageinit, language= DecoupageScenarios(scenars)
             #on recupere le chemin absolu de l'apk
             try:
                 if self.choixDebug==0:
@@ -124,16 +106,28 @@ class Simulation(Thread):
             else:
                 adb.installApk("./apk/debug/"+apk+".apk")
                 adb.installApk("./apk/robotium/"+apk+".apk")
-            # on fait tourner l'application une premiere fois dans le vide
+            # on fait tourner l'application une premiere fois
             self.fenetre.setInstruction("test préliminaire de l'apk...")
-            # on démarre l'application
-            adb.startApk(apk, package)
-            time.sleep(10)
-            # On ferme l'application
-            adb.closeApk(apk)
+            if self.choixRobot==1:
+                for j in range(0,int(occurenceInit)):
+                    # on démarre l'application
+                    adb.startApk(apk, package)
+                    time.sleep(5)
+                    # on supprime les evenements exceptionnels
+                    robot.Robot(api, ecran, self.fenetre, Z_min,languageinit).action()
+                    time.sleep(5)
+                    # On ferme l'application
+                    adb.closeApk(apk)
+            else:
+                # on démarre l'application
+                adb.startApk(apk, package)
+                time.sleep(10)
+                # On ferme l'application
+                adb.closeApk(apk)
             self.fenetre.setInstruction("test de l'application...")
             # On demarre le test de l'application
             for i in range(1,int(self.repetition)+1):
+                num_test+=1
                 # On regarde si le fichier existe deja
                 if os.path.exists("./results/"+apk+"-"+str(i)+".csv"):
                     continue
@@ -141,7 +135,7 @@ class Simulation(Thread):
                 self.fenetre.setInstruction("etape "+str(i)+"/"+str(int(self.repetition))+" : En cours")
                 if self.powertran == 1:
                     adb.startApk("powertran", "powertran.start")
-                    robot.Robot(api, ecran, self.fenetre, Z_min,"./ressources/powertran/powertran_scenario.sim",0 ).action()
+                    robot.Robot(api, ecran, self.fenetre, Z_min,"").action()
                     adb.closeApk("powertran")
                 # on recupere la temperature et frequence du processeur avant test
                 temp1=1
@@ -150,7 +144,7 @@ class Simulation(Thread):
                 adb.Luminosity(0)
                 # on place le robot en position (pour toujours commencer au même endroit)
                 if self.choixRobot==1:
-                    robot.Robot(api, ecran, self.fenetre, Z_min, "mov("+str(int(ecran.pixelwidth)/2)+","+str(int(ecran.pixelheight)/2)+")", 0).action()
+                    robot.Robot(api, ecran, self.fenetre, Z_min, "mov("+str(int(ecran.pixelwidth)/2)+","+str(int(ecran.pixelheight)/2)+")").action()
                 # On démarre l'oscilloscope sélectionné
                 Mesure.start("./results/"+apk+"-"+str(i)+".csv")
                 #si on utilise le robot
@@ -160,7 +154,7 @@ class Simulation(Thread):
                     # temps de pause par sécurité
                     time.sleep(1)
                     # On execute notre scénario complet
-                    robot.Robot(api,ecran,self.fenetre,Z_min,language,pas).action()
+                    robot.Robot(api,ecran,self.fenetre,Z_min,language).action()
                     # On ferme l'application
                     adb.closeApk(apk)
                 # si on utilise pas le robot
@@ -173,6 +167,8 @@ class Simulation(Thread):
                 self.fenetre.setInstruction("étape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
                 # On arrete et sauvegarde la mesure d'energie
                 Mesure.stop(True,temp1,freq1,1,1)
+                #on met à jour la barre de chargement
+                self.fenetre.setpourcent(100. * num_scenar / len(Filelist)+float(num_test/(self.repetition*len(Filelist))))
             #Si on utilise la methode powertran
             if self.powertran == 1:
                 self.fenetre.setInstruction("désinstallation de l'apk PowerTran...")
@@ -185,6 +181,7 @@ class Simulation(Thread):
                 adb.uninstallApk(apk)
             else:
                 adb.uninstallApk(apk)
+            num_scenar+=1
         # On tient au courant l'utilisateur
         self.fenetre.setInstruction("Les mesures ont été enregistrées dans\nle dossier results.")
         #on deconnecte le robot
@@ -196,3 +193,31 @@ def alreadydone(scenario,repetition):
         if not os.path.exists("./results/"+scenario[0:-4]+"-"+str(i)+".csv"):
             return False
     return True
+
+def DecoupageScenarios(scenars):
+    """On decoupe le fichier de simulation pour obtenir toutes nos valeurs utiles"""
+    File = open("./scenarios/" + scenars, 'r')
+    # récuperer nom de l'apk
+    apk = scenars[0:-4]
+    # recuperer le package pour le focus
+    File.readline()
+    package = File.readline().strip('\n')
+    # on recupere le nbre d'occurence pour le test
+    File.readline()
+    occurenceInit = File.readline().strip('\n').split("=")[-1]
+    # on lit la partie init du code
+    File.readline()
+    lignecourante = File.readline()
+    languageinit = ""
+    while lignecourante != "########SIMULATION CODE########\n":
+        languageinit += lignecourante
+        lignecourante = File.readline()
+    # on récuperer le language pour le robot
+    lignecourante = File.readline()
+    language = ""
+    while len(lignecourante) != 0:
+        language += lignecourante
+        lignecourante = File.readline()
+    # fermer le fichier
+    File.close()
+    return(apk,package,occurenceInit,languageinit,language)

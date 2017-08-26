@@ -1,4 +1,9 @@
+############PACKAGE############
 com.ijoysoft.hdplayer.ui.MainActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(149.75, 343.25) 
 touch()
 wait(20000) 

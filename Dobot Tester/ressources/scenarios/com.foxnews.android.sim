@@ -1,6 +1,26 @@
+############PACKAGE############
 com.foxnews.android.corenav.StartActivity
+###########OCCURENCE###########
+occ=2
+#############INIT##############
+wait(2000)
+mov(650, 850)
+touch()
+wait(2000)
+mov(730, 400) 
+touch()
+wait(2000)
+mov(730, 400)
+touch()
 wait(2000)
 mov(384.7702, 984.7433) 
+touch()
+wait(2000)
+touch()
+########SIMULATION CODE########
+wait(2000)
+mov(384.7702, 984.7433) 
+touch()
 touch()
 wait(7000) 
 scroll(384, 1049.5, 384, 539.5)
@@ -9,7 +29,7 @@ scroll(384, 1049.5, 384, 539.5)
 wait(7000) 
 return 
 scroll(384, 1049.5, 384, 539.5)
-mov(384.7702, 984.7433) 
+mov(384.7702, 650) 
 touch()
 wait(7000)
 scroll(384, 1049.5, 384, 539.5)

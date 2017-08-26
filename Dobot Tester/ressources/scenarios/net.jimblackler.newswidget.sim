@@ -1,4 +1,9 @@
+############PACKAGE############
 net.jimblackler.newswidget.MainTabActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+########SIMULATION CODE########
 mov(384, 399.0)
 touch()
 wait(7000)
