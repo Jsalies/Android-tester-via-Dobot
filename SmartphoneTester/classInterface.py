@@ -19,6 +19,8 @@ class Interface():
     def boost(self):
         value = float(self.pourcent) * 5.88
         self.bar.place(height=38, width=value, x=7, y=7)
+        if platform.system()!="Windows":
+            self.fenetre.after(1,self.boost())
 
     def __init__(self):
         # definition des variables globals
@@ -335,16 +337,13 @@ class Interface():
         if (value >= 0 and value <= 100):
             self.pourcent = value
             self.pourcentafficher.set(str(round(value, 1)) + "%")
-            self.boost()
-            return
         elif (value < 0):
             self.pourcent = 0
             self.pourcentafficher.set("0%")
-            self.boost()
-            return
         else:
             self.pourcent = 100
             self.pourcentafficher.set("100%")
+        if platform.system() == "Windows":
             self.boost()
 
     def start(self):

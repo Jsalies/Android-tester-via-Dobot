@@ -11,7 +11,7 @@ def Connect(ip):
     if platform.system() == "Windows":
         subprocess.check_output(".\platform-tools\\adb connect " + ip)
     else:
-        os.popen("adb connect " + ip)
+        os.system("adb connect " + ip)
 
 
 def SizeScreen():
@@ -66,7 +66,7 @@ def installApk(apkName):
         return subprocess.check_output(".\platform-tools\\adb install " + "\"" + apkName + "\"", shell=True,
                                        universal_newlines=True)
     else:
-        return os.popen("adb install " + "\"" + apkName + "\"")
+        return os.system("adb install " + "\"" + apkName + "\"")
 
 
 def uninstallApk(apkName):
@@ -87,7 +87,7 @@ def startApk(apkName, packageName):
     if platform.system() == "Windows":
         subprocess.check_output(".\platform-tools\\adb shell am start -n " + apkName + "/" + packageName)
     else:
-        os.popen("adb shell am start -n " + apkName + "/" + packageName)
+        os.system("adb shell am start -n " + apkName + "/" + packageName)
 
 
 def closeApk(apkName):
@@ -99,7 +99,7 @@ def closeApk(apkName):
     if platform.system() == "Windows":
         subprocess.check_output(".\platform-tools\\adb shell am force-stop " + apkName)
     else:
-        os.popen("adb shell am force-stop " + apkName)
+        os.system("adb shell am force-stop " + apkName)
 
 
 def Luminosity(value):
