@@ -1,0 +1,29 @@
+############PACKAGE############
+ca.cbc.android.news.ui.SplashActivity
+###########OCCURENCE###########
+occ=1
+#############INIT##############
+mov(50, 1160)
+touch()
+mov(384, 680.0) 
+touch()
+mov(700, 646.0) 
+touch()
+########SIMULATION CODE########
+mov(384, 646.0) 
+touch()
+wait(1000)
+touch()
+wait(7000) 
+scroll(384, 1049.5, 384, 539.5) 
+wait(7000) 
+scroll(384, 1019.5, 384, 523.5)
+wait(7000) 
+return 
+mov(384, 1087.5) 
+touch()
+wait(7000) 
+scroll(384, 1075.5, 384, 599.0) 
+wait(7000) 
+scroll(384, 990.5, 384, 531.5) 
+wait(7000) 

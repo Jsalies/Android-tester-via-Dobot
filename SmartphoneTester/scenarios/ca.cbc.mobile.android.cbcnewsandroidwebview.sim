@@ -12,6 +12,7 @@ touch()
 ########SIMULATION CODE########
 mov(384, 646.0) 
 touch()
+wait(1000)
 touch()
 wait(7000) 
 scroll(384, 1049.5, 384, 539.5) 
