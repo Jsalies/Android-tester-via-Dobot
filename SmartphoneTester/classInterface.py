@@ -66,12 +66,12 @@ class Interface:
         # placement des titres
         self.txt1.place(height=20, width=400, x=0, y=10)
         self.txt2.place(height=20, width=400, x=400, y=10)
-        self.txt3.place(height=20, width=150, x=20, y=83)
+        self.txt3.place(height=20, width=160, x=10, y=83)
         self.txt4.place(height=20, width=150, x=20, y=116)
         self.txt5.place(height=20, width=150, x=20, y=150)
-        self.txt6.place(height=20, width=124, x=138, y=190)
-        self.txt7.place(height=20, width=120, x=540, y=190)
-        self.txt8.place(height=20, width=250, x=660, y=582)
+        self.txt6.place(height=20, width=132, x=134, y=190)
+        self.txt7.place(height=20, width=124, x=540, y=190)
+        self.txt8.place(height=20, width=250, x=650, y=582)
         self.txt9.place(height=20, width=150, x=20, y=50)
         # on récupere le systeme d'exploitation ainsi que la version de python
         # on definit une variable
@@ -120,7 +120,7 @@ class Interface:
                 self.longvalue.set(size[1])
                 self.hautvalue.set(size[0])
             except:
-                self.setInstruction("Veuillez renseigner la taille de l'écran du telephone")
+                self.setInstruction("Veuillez renseigner la taille de l'ecran du telephone")
 
         # definition du bouton AJUSTER
         self.ajust = Button(self.fenetre, text='L/H AUTO', bg='#797DF6', font=("ms serif", 10, "bold"),
@@ -231,7 +231,7 @@ class Interface:
         self.frequence = IntVar()
         self.frequence.set(125000)
         self.valeurfrequence = Spinbox(self.fenetre, textvariable=self.frequence, from_=5000, to=200000, bg="gray")
-        self.valeurfrequence.place(width=80, height=20, y=402, x=665)
+        self.valeurfrequence.place(width=80, height=20, y=398, x=665)
         # on force la valeur de la frequence pour le monsoon
         self.tempo = 125000
 
@@ -290,8 +290,8 @@ class Interface:
                 thread1 = simulation.Simulation(self)
                 thread1.start()
             except:
-                self.setInstruction(
-                    "Veuillez selectionner un scénario dans la liste\nOu cocher la case \"Tout tester\"")
+                self.setInstruction("Veuillez selectionner un scenario dans la liste")
+                self.setInstruction("Ou cocher la case \"Tout tester\"")
 
         # definition du bouton LANCER
         self.bouton = Button(self.fenetre, text='LANCER', bg='#797DF6', font=("ms serif", 10, "bold"), command=Init)
@@ -300,7 +300,7 @@ class Interface:
 
         # definition de la fonction de calibrage
         def calibrer():
-            calibrage= calibration.Calibration(self)
+            calibrage = calibration.Calibration(self)
             calibrage.start()
 
         # definition du bouton Calibrage
@@ -324,7 +324,11 @@ class Interface:
     def setInstruction(self, texte):
         fullnewline = (self.TexteInstructions.get() + "\n" + texte).split("\n")
         partialnewline = ""
-        for i in range(max(0, len(fullnewline) - 7), len(fullnewline)):
+        if platform.system() == "Windows":
+            nblines = 7
+        else:
+            nblines = 10
+        for i in range(max(0, len(fullnewline) - nblines), len(fullnewline)):
             partialnewline += fullnewline[i] + "\n"
         partialnewline.strip("\n")
         self.TexteInstructions.set(partialnewline.strip("\n"))
