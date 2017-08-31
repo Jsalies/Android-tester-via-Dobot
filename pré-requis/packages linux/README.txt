@@ -1,19 +1,12 @@
-﻿1/choisissez python 2.7
+﻿0/ retirer le "secured path" dans etc/sudoers, cela evitera d'avoir des problemes avec beaucoup de commandes.
 
-2/installez les packages à l'aide des commandes suivantes:
+1/ installez python 2.7 via Anaconda (beaucoup plus pratique pour l'intégralité des bibliothèques)
 
-sudo apt-get install python-tk
-sudo apt-get install python-imaging
-sudo apt-get install python-imaging-tk
-sudo apt-get install android-tools-adb android-tools-fastboot
+2/ executez le script shell pour installer toutes les bibliotheques necessaires (et les dlls)
 
-3/placer les dlls Qt5dlls 32x ou 64x dans usr/lib/
+3/ vous n'avez plus qu'a lancer "sudo python main.py"
 
-4/installez Pylibtiepie
-
-5/installer ply
-
-6/ pour monter un telephone correctement:
+si nécessaire : pour monter un telephone correctement:
 
 sudo wget -O /etc/udev/rules.d/51-android.rules https://raw.githubusercontent.com/NicolasBernaerts/ubuntu-scripts/master/android/51-android.rules
 sudo chmod a+r /etc/udev/rules.d/51-android.rules
@@ -40,7 +33,7 @@ pour monter correctement un telephone:
 	sudo service udev restart
 	6. Create mount point and permissions (will need to do this for other Nexus' if using for the 7 or 10)
 	sudo mkdir /media/nexus4
-	chmod 755 /media/nexus4
+	sudo chmod 755 /media/nexus4
 
 	7. Plug in the Nexus 4 and make sure MTP is enabled.
 

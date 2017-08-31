@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import platform
-import threading
-
 import PIL.Image
 import PIL.ImageTk
 import os
@@ -9,18 +7,21 @@ import simulation
 import shellcommands as adb
 import Synthese
 import DisplayGraphics
-import Dobotfunctions as dbf
+import calibration
 from multiprocessing import Process
-from tkinter import *
-from tkinter import messagebox as msgbox
+
+try:
+    from tkinter import *
+    from tkinter import messagebox as msgbox
+except:
+    from Tkinter import *
+    import tkMessageBox as msgbox
 
 
-class Interface():
+class Interface:
     def boost(self):
         value = float(self.pourcent) * 5.88
         self.bar.place(height=38, width=value, x=7, y=7)
-        if platform.system()!="Windows":
-            self.fenetre.after(1,self.boost())
 
     def __init__(self):
         # definition des variables globals
@@ -31,7 +32,7 @@ class Interface():
         self.fenetre.resizable(width=False, height=False)
         self.Htrigger = (self.fenetre.winfo_screenwidth() - 815) / 2
         self.Vtrigger = (self.fenetre.winfo_screenheight() - 615) / 2
-        self.fenetre.geometry('800x600+{}+{}'.format(int(self.Htrigger), int(self.Vtrigger)))
+        self.fenetre.geometry('799x599+{}+{}'.format(int(self.Htrigger), int(self.Vtrigger)))
         self.fenetre.attributes("-alpha", 0.9)
         # definition de l'arriere plan
         self.monfond = PIL.Image.open("./ressources/pictures/background.jpeg")
@@ -58,7 +59,7 @@ class Interface():
             version = "x86"
         self.txt8 = Label(self.fenetre, text=platform.system() + " Python v" + str(sys.version_info[0]) + "." + str(
             sys.version_info[1]) + "." + str(sys.version_info[2]) + " " + version, fg="white",
-                          font=("Helvetica", 7, "bold italic"), bg="black", anchor='e')
+                          font=("Helvetica", 7, "bold italic"), bg="black", anchor='w')
         self.txt9 = Label(self.fenetre, text='IP du telephone :', fg="white", font=("Helvetica", 10, "bold"),
                           bg="black", anchor='e')
 
@@ -70,7 +71,7 @@ class Interface():
         self.txt5.place(height=20, width=150, x=20, y=150)
         self.txt6.place(height=20, width=124, x=138, y=190)
         self.txt7.place(height=20, width=120, x=540, y=190)
-        self.txt8.place(height=20, width=250, x=610, y=582)
+        self.txt8.place(height=20, width=250, x=660, y=582)
         self.txt9.place(height=20, width=150, x=20, y=50)
         # on récupere le systeme d'exploitation ainsi que la version de python
         # on definit une variable
@@ -299,7 +300,8 @@ class Interface():
 
         # definition de la fonction de calibrage
         def calibrer():
-            threading.Thread(target=dbf.HorizontalTesting(self)).start()
+            calibrage= calibration.Calibration(self)
+            calibrage.start()
 
         # definition du bouton Calibrage
         self.calibrage = Button(self.fenetre, text='Calibrage inclinaison téléphone', bg='#797DF6',
