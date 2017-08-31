@@ -20,11 +20,11 @@ class Calibration(Thread):
             self.fenetre.setInstruction("Veuillez brancher le Dobot Magician ou installez les\ndrivers correspondants.")
             return
         elif (state == dType.DobotConnect.DobotConnect_Occupied):
-            self.fenetre.setInstruction("Veuillez libérer le port USB du robot et Réessayer.")
+            self.fenetre.setInstruction("Veuillez liberer le port USB du robot et Réessayer.")
             return
         else:
-            self.fenetre.setInstruction("Dobot Magician bien connecté. Démarrage du calibrage.")
-            z = Dfonct.PositionAndTexte(api, self.fenetre, "placer le bras à son point le plus bas : ")[-1]
+            self.fenetre.setInstruction("Dobot Magician bien connecte. Démarrage du calibrage.")
+            z = Dfonct.PositionAndTexte(api, self.fenetre, "placer le bras à son point le plus bas : ")[2]
             HG = Dfonct.PositionAndTexte(api, self.fenetre, "placer le bras dans le coin haut gauche : ")
             HD = Dfonct.PositionAndTexte(api, self.fenetre, "placer le bras dans le coin haut droit : ")
             BG = Dfonct.PositionAndTexte(api, self.fenetre, "placer le bras dans le coin bas gauche : ")
@@ -38,10 +38,10 @@ class Calibration(Thread):
                 Dfonct.Movement(api, HD[0], HD[1], z)
                 if self.fenetre.entrer == 1:
                     break
-                Dfonct.Movement(api, BG[0], BG[1], z)
+                Dfonct.Movement(api, BD[0], BD[1], z)
                 if self.fenetre.entrer == 1:
                     break
-                Dfonct.Movement(api, BD[0], BD[1], z)
+                Dfonct.Movement(api, BG[0], BG[1], z)
                 if self.fenetre.entrer == 1:
                     break
             self.fenetre.setInstruction("fin du test.")

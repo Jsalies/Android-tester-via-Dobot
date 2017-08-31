@@ -67,7 +67,7 @@ class synthese(Thread):
             self.fenetre.setInstruction("le dossier \"./results\" est vide.")
             return
         pas = 100. / len(os.listdir(self.data_entree))
-        self.fenetre.setInstruction("Debut de la syntheses des fichiers.")
+        self.fenetre.setInstruction("Debut de la synthese des fichiers.")
         # pour chaque fichier dans./results/
         MultiListe = []
         for file in sorted(os.listdir(self.data_entree)):
@@ -106,4 +106,4 @@ class synthese(Thread):
 
         summary.to_csv('./synthese/{}_summary.csv'.format(self.data_sortie), index=False, sep=';')
         self.fenetre.setInstruction(
-            "Travail terminé.\nTemps total pris pour la synthèse: " + str(round((time.time() - deb), 2)) + " secs")
+            "Travail termine.\nTemps total pris pour la synthese : " + str(round((time.time() - deb), 2)) + " secs")

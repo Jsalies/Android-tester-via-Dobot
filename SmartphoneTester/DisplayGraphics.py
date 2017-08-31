@@ -15,7 +15,7 @@ class graphics():
         self.run()
 
     def run(self):
-        print("Génération des courbes :")
+        print("Generation des courbes :")
         # on génere nos variables
         deb = time.time()
         multifile = []
@@ -42,7 +42,7 @@ class graphics():
             for curve in resultat:
                 Moyenne += curve[0:LenMin]
             plt.plot(Moyenne / len(resultat), "b:", linewidth=3, label="Average")
-            print("DONE!! (durée total : " + str(round(time.time() - debfile, 1)) + " secs)")
+            print("DONE!! (duree totale : " + str(round(time.time() - debfile, 1)) + " secs)")
 
         # on génere les moyennes des courbes situées dans les dossiers de ./ressources/graph/
         for file in multidir:
@@ -60,10 +60,10 @@ class graphics():
             for curve in resultat:
                 Moyenne += curve[0:LenMin]
             plt.plot(Moyenne / len(resultat), ":", linewidth=3, label=file)
-            print("DONE!! (durée total : " + str(round(time.time() - debdir, 1)) + " secs)")
+            print("DONE!! (duree total : " + str(round(time.time() - debdir, 1)) + " secs)")
 
         # on affiche tout
-        print("durée total de la génération des graphs : " + str(round(time.time() - deb, 2)) + "secs")
+        print("duree total pour la generation des graphs : " + str(round(time.time() - deb, 2)) + "secs")
         plt.legend()
         plt.show()
 

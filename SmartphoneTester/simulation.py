@@ -45,7 +45,7 @@ class Simulation(Thread):
             if platform.system() != "Windows":
                 Mesure = MM.Monsoon()
             else:
-                self.fenetre.setInstruction("Le Monsoon n'est actuellement pas supporté par Windows")
+                self.fenetre.setInstruction("Le Monsoon n'est actuellement pas supporte par Windows")
                 return
         else:
             Mesure = OEC.OscilloscopeEnergyCollector(self.valeurfrequence, self.fenetre)
@@ -61,10 +61,10 @@ class Simulation(Thread):
                     "Veuillez brancher le Dobot Magician ou installez les\ndrivers correspondants.")
                 return
             elif (state == dType.DobotConnect.DobotConnect_Occupied):
-                self.fenetre.setInstruction("Veuillez libérer le port USB du robot et Réessayer.")
+                self.fenetre.setInstruction("Veuillez liberer le port USB du robot et Reessayer.")
                 return
             else:
-                self.fenetre.setInstruction("Dobot Magician bien connecté. Démarrage du test.")
+                self.fenetre.setInstruction("Dobot Magician bien connecte. Demarrage du test.")
                 # on initialise le robot
                 Dfonct.SpeedInit(api)
                 Dfonct.Init(api)
@@ -73,7 +73,7 @@ class Simulation(Thread):
                 # on entre les données de notre écran
                 ecran = screen.screen(api, self.largueur, self.longueur, self.fenetre)
         else:
-            self.fenetre.setInstruction("Mode sans robot. Démarrage du test.")
+            self.fenetre.setInstruction("Mode sans robot. Demarrage du test.")
         # on regarde si nous faisons le test sur un ou plusieurs scénarios
         Filelist = []
         if self.tousScenarios == 1:
@@ -98,7 +98,7 @@ class Simulation(Thread):
                     chemin = os.path.abspath("./apk/debug/" + apk + ".apk")
             except:
                 self.fenetre.setInstruction(
-                    "l'apk spécifié en ligne 1 dans le dossier scénario \nn'est pas présent dans le dossier apk. \nVeuillez l'ajouter ou modifier son nom.")
+                    "l'apk specifie en ligne 1 dans le dossier scenario \nn'est pas presente dans le dossier apk. \nVeuillez l'ajouter ou modifier son nom.")
                 return
             if self.powertran == 1:
                 self.fenetre.setInstruction("installation de l'apk PowerTran...")
@@ -110,7 +110,7 @@ class Simulation(Thread):
                 adb.installApk("./apk/debug/" + apk + ".apk")
                 adb.installApk("./apk/robotium/" + apk + ".apk")
             # on fait tourner l'application une premiere fois
-            self.fenetre.setInstruction("test préliminaire de l'apk...")
+            self.fenetre.setInstruction("test preliminaire de l'apk...")
             if self.choixRobot == 1:
                 for j in range(0, int(occurenceInit)):
                     # on démarre l'application
@@ -168,17 +168,17 @@ class Simulation(Thread):
                     else:
                         adb.RobotiumTest(True, apk)
                 # On tient au courant l'utilisateur
-                self.fenetre.setInstruction("étape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
+                self.fenetre.setInstruction("etape " + str(i) + "/" + str(int(self.repetition)) + " : Enregistrement")
                 # On arrete et sauvegarde la mesure d'energie
                 Mesure.stop(True, temp1, freq1, 1, 1)
                 # on met à jour la barre de chargement
                 self.fenetre.setpourcent(100.*(num_scenar+(num_test/float(self.repetition)))/len(Filelist))
             # Si on utilise la methode powertran
             if self.powertran == 1:
-                self.fenetre.setInstruction("désinstallation de l'apk PowerTran...")
+                self.fenetre.setInstruction("desinstallation de l'apk PowerTran...")
                 adb.uninstallApk("powertran")
             # On tient au courant l'utilisateur
-            self.fenetre.setInstruction("désinstallation de l'apk...")
+            self.fenetre.setInstruction("desinstallation de l'apk...")
             # Une fois que tout est fait, on désinstalle l'application
             if self.choixRobot == 0:
                 adb.uninstallApk(apk + ".test")
@@ -186,7 +186,7 @@ class Simulation(Thread):
             else:
                 adb.uninstallApk(apk)
         # On tient au courant l'utilisateur
-        self.fenetre.setInstruction("Les mesures ont été enregistrées dans\nle dossier results.")
+        self.fenetre.setInstruction("Les mesures ont ete enregistrees dans\nle dossier results.")
         # on deconnecte le robot
         if self.choixRobot == 1:
             dType.DisconnectDobot(api)
@@ -214,7 +214,7 @@ def DecoupageScenarios(scenars):
     File.readline()
     lignecourante = File.readline()
     languageinit = ""
-    while lignecourante != "########SIMULATION CODE########\n":
+    while not lignecourante.startswith("########SIMULATION CODE########"):
         languageinit += lignecourante
         lignecourante = File.readline()
     # on récuperer le language pour le robot
