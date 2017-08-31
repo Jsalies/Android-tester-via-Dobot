@@ -2,9 +2,13 @@
 
 1/ installez python 2.7 via Anaconda (beaucoup plus pratique pour l'intégralité des bibliothèques)
 
-2/ executez le script shell pour installer toutes les bibliotheques necessaires (et les dlls)
+2/ executez le script shell 32 ou 64 pour installer toutes les bibliotheques necessaires (et les dlls)
+
+s'il y a un bug, executer vous même ligne par ligne le code.
 
 3/ vous n'avez plus qu'a lancer "sudo python main.py"
+
+pour desactiver la charge USB: uiliser l'apk fourni dans apkusbdisabled
 
 si nécessaire : pour monter un telephone correctement:
 
